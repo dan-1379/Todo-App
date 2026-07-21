@@ -6,6 +6,7 @@ import InputWarning from './components/InputWarning';
 import "./App.css"
 import TodoModal from './components/TodoModal';
 import { Info } from 'lucide-react';
+import CompletedTodoItem from './components/CompletedTodoItem';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
 
   const [todo, setTodo] = useState("");
   const [todoColor, setTodoColor] = useState("#CBD5E1");
-  const [todoTextColor, setTodoTextColor] = useState("#000");
+  const [todoTextColor, setTodoTextColor] = useState("#000000");
   const [openModal, setOpenModal] = useState(null);
 
   const openModalView = (item) => {
@@ -27,8 +28,14 @@ function App() {
     setOpenModal(null);
   }
 
-  const handleUpdate = (index, newValue) => {
-    setTodos(todos.map((t, i) => (i === index ? { ...t, text: newValue } : t)));
+  const handleUpdate = (index, newValue, newColor, newTextColor) => {
+    setTodos(todos.map((t, i) => 
+      (i === index 
+        ? { ...t, text: newValue, color: newColor, textColor: newTextColor } 
+        : t
+      )
+    ));
+    
     closeModalView();
   }
 
@@ -62,11 +69,19 @@ function App() {
       return;
     }
     
-    setTodos(t => [...t, { text: todo.trim(), color: todoColor, textColor: todoTextColor }]);
+    setTodos(t => [...t, { text: todo.trim(), color: todoColor, textColor: todoTextColor, dateAdded: getCurrentDate(), timeStamp: Date.now() }]);
+    
     setTodo("");
     setTodoColor("#CBD5E1");
-    setTodoTextColor("#fff");
+    setTodoTextColor("#000000");
   }
+
+  const getCurrentDate = () => {
+        const date = new Date();
+        const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
+        return formattedDate;
+    }
 
   function handleDelete(index) {
     setTodos(todos.filter((_, i) => i !== index));
@@ -75,7 +90,10 @@ function App() {
   function handleComplete(index) {
     const completed = {
       item: todos[index].text,
-      timeCompleted: getTime() 
+      timeStarted: todos[index].dateAdded,
+      timeCompleted: getCurrentDate(),
+      timeStampStarted: todos[index].timeStamp,
+      timeStampCompleted: Date.now()
     };
 
     setTodos(todos.filter((_, i) => i !== index));
@@ -84,14 +102,6 @@ function App() {
 
   function resetTodos() {
     setCompleted([]);
-  }
-
-  function getTime() {
-    const d = new Date();
-    const hours = d.getHours();
-    const minutes = d.getMinutes();
-
-    return `${hours}:${minutes > 10 ? minutes : "0" + minutes}`;
   }
 
   return (
@@ -117,7 +127,7 @@ function App() {
                 className='w-full md:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400'
               />
 
-              <div className='flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
+              <div className='flex items-center gap-5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
                 <div className='flex items-center gap-2'>
                   <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Background</label>
                   <input 
@@ -156,6 +166,7 @@ function App() {
                   name={element.text} 
                   color={element.color}
                   textColor={element.textColor}
+                  dateAdded={element.dateAdded}
                   key={index}
                   onView={() => openModalView(index)}
                   onComplete={() => handleComplete(index)}
@@ -167,13 +178,20 @@ function App() {
 
         <div className='flex-1 bg-white rounded-2xl shadow-lg p-6'>
           <h2 className='text-2xl md:text-3xl font-bold mb-4 text-slate-800'>Completed Todos</h2>
+
+          {completed.length > 0 && 
+            <div className='flex gap-2 mt-5 mb-5 border-l-2 border-blue-400 w-fit p-2'>
+                <Info className='text-blue-500'/>
+                <p>{Math.round(((completed.length) / (todos.length + completed.length) * 100), 2)}% completed</p>
+            </div>
+          }
           
           {completed.length == 0 &&
               <div className='flex gap-2 mt-5 mb-5 border-l-2 border-blue-400 w-fit p-2'>
                 <Info className='text-blue-500'/>
                 <p>Your completed todos will appear here</p>
               </div>
-            }
+          }
 
           {completed.length > 0 && 
             <button 
@@ -183,25 +201,30 @@ function App() {
           
           <ul className='space-y-2 text-slate-600'>
             {completed.sort().map((element, index) => 
-              <li key={index}
-                  className='bg-slate-100 rounded-lg px-4 py-3 my-5 text-slate-800 flex justify-between'>
-                    <span>{element.item}</span>
-                    <span className='flex items-center text-sm text-slate-500'>{element.timeCompleted}</span>
-              </li>
+              <CompletedTodoItem 
+                key={index} 
+                item={element.item} 
+                timeStarted={element.timeStarted} 
+                timeCompleted={element.timeCompleted} 
+                timeStampStarted={element.timeStampStarted}
+                timeStampCompleted={element.timeStampCompleted}
+              />
             )}
           </ul>
         </div>
 
         {openModal !== null && 
           <TodoModal 
-            item={todos[openModal].text} 
-            onSave={(newValue) => handleUpdate(openModal, newValue)} 
+            item={todos[openModal].text}
+            background={todos[openModal].color}
+            textColor={todos[openModal].textColor}
+            onSave={(newValue, newColor, newTextColor) => handleUpdate(openModal, newValue, newColor, newTextColor)} 
             closeModal={closeModalView} 
           />
         }
       </div>
 
-      <div className='w-md absolute bottom-3 right-3'>
+      <div className='fixed inset-x-3 bottom-10 sm:left-auto sm:right-10 sm:w-md'>
           {inputError && <InputError closeError={() => setInputError(false)} />} 
           {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />} 
       </div>
