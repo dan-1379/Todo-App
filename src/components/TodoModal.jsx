@@ -43,7 +43,7 @@ const TodoModal = ({ item, background, textColor, closeModal, onSave }) => {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <input type="text" value={todo} onChange={(e) => setTodo(e.target.value)} name="" id="" placeholder="Enter todo" className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"/>
 
-                    <div className='flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
+                    <div className='flex flex-col sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
                         <div className='flex items-center gap-2'>
                             <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Background</label>
                             <input 

@@ -5,8 +5,9 @@ import InputError from './components/InputError';
 import InputWarning from './components/InputWarning';
 import "./App.css"
 import TodoModal from './components/TodoModal';
-import { Info } from 'lucide-react';
+import { Info, Settings } from 'lucide-react';
 import CompletedTodoItem from './components/CompletedTodoItem';
+import SettingsModal from './components/SettingsModal';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   const [todoColor, setTodoColor] = useState("#CBD5E1");
   const [todoTextColor, setTodoTextColor] = useState("#000000");
   const [openModal, setOpenModal] = useState(null);
+  const [openSettings, setOpenSettings] = useState(false);
 
   const openModalView = (item) => {
     setOpenModal(item);
@@ -26,6 +28,14 @@ function App() {
 
   const closeModalView = () => {
     setOpenModal(null);
+  }
+
+  const openSettingsModal = () => {
+    setOpenSettings(true);
+  }
+
+  const closeSettingsModal = () => {
+    setOpenSettings(false);
   }
 
   const handleUpdate = (index, newValue, newColor, newTextColor) => {
@@ -104,8 +114,40 @@ function App() {
     setCompleted([]);
   }
 
+
+  const [colourSettings, setColourSettings] = useState(() => {
+    const settings = localStorage.getItem("Color-Settings");
+    return settings ? JSON.parse(settings) : {};
+  });
+
+   useEffect(() => {
+    localStorage.setItem('Color-Settings', JSON.stringify(colourSettings));
+  }, [colourSettings]);
+
+  const [headingBackgroundColour, setHeadingBackgroundColour] = useState("");
+
+  const handleColorSettings = () => {
+    const settings = {
+      headingBgColour: headingBackgroundColour,
+      fontHeadingColour: colourSettings.fontHeadingColour,
+      bgColour: colourSettings.bgColour,
+      cardBgColour: colourSettings.cardBgColour,
+      addButtonColour: colourSettings.addButtonColour,
+      removeButtonColour: colourSettings.removeButtonColour,
+      completedTodoColour: colourSettings.completedTodoColour,
+      automaticTodoColour: colourSettings.automaticTodoColour,
+      infoColour: colourSettings.infoColour
+    }
+
+    setColourSettings(settings);
+  }
+
   return (
     <div>
+      <div className='bg-slate-200 p-5 flex justify-between items-center text-slate-600'>
+        <h1 className='text-2xl md:text-3xl font-bold'>Todolistful</h1>
+        <button className='cursor-pointer hover:text-slate-400' onClick={() => openSettingsModal()}><Settings /></button>
+      </div>
       <div className='min-h-screen bg-slate-100 flex flex-col md:flex-row gap-8 p-5'>
         <div className='flex-1 bg-white rounded-2xl shadow-lg p-6'>
           <div>
@@ -118,7 +160,7 @@ function App() {
               </div>
             }
 
-            <div className='flex flex-col gap-3 md:flex-row md:items-center'>
+            <div className='flex flex-col gap-3 md:flex-col lg:flex-row'>
               <input 
                 type='text' 
                 placeholder='Enter a todo...'
@@ -153,7 +195,7 @@ function App() {
 
               <button 
                 onClick={handleInput} 
-                className='w-full md:w-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition'>
+                className='cursor-pointer w-full md:w-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition'>
                 Add Todo
               </button>
             </div>
@@ -196,7 +238,7 @@ function App() {
           {completed.length > 0 && 
             <button 
               onClick={resetTodos} 
-              className='mb-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition'>Remove All</button>
+              className='cursor-pointer mb-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition'>Remove All</button>
           }
           
           <ul className='space-y-2 text-slate-600'>
@@ -220,6 +262,14 @@ function App() {
             textColor={todos[openModal].textColor}
             onSave={(newValue, newColor, newTextColor) => handleUpdate(openModal, newValue, newColor, newTextColor)} 
             closeModal={closeModalView} 
+          />
+        }
+
+        {openSettings &&
+          <SettingsModal 
+            closeModal={() => closeSettingsModal()}
+            handleSubmit={() => setColourSettings()}
+            colorSettings={colourSettings}
           />
         }
       </div>
