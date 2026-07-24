@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-const CompletedTodoItem = (props) => {
+const CompletedTodoItem = ({ item, timeStarted, timeCompleted, timeStampStarted, timeStampCompleted, colourModes }) => {
      const formatDuration = (ms) => {
         if (!ms || ms < 0) return "—";
 
@@ -14,16 +14,18 @@ const CompletedTodoItem = (props) => {
         return "<1m";
     }
 
-     const timeTaken = formatDuration(props.timeStampCompleted - props.timeStampStarted);
+     const timeTaken = formatDuration(timeStampCompleted - timeStampStarted);
 
     return (
-        <li className='bg-slate-100 rounded-lg px-4 py-3 my-5 text-slate-800 flex justify-between border-l-5 border-slate-300'>
+        <li className='rounded-lg px-4 py-3 my-5 flex justify-between border-l-5 border-slate-300'
+            style={{backgroundColor: colourModes.completedTodoColour, color: colourModes.completedTodoFontHeadingColor }}
+        >
             <div className='flex gap-2 justify-center items-center'>
-                <Check size={20} className="text-slate-400"/>
+                <Check size={20} className="text-slate-400" style={{ color: colourModes.completedTodoFontHeadingColor }}/>
 
                 <div className='flex flex-col'>
-                    <p className='font-semibold text-md'>{props.item}</p> 
-                    <p className='flex items-center text-sm text-slate-500'>{props.timeStarted} - {props.timeCompleted}</p>
+                    <p className='font-semibold text-md' style={{ color: colourModes.completedTodoFontHeadingColor }}>{item}</p> 
+                    <p className='flex items-center text-sm text-slate-500' style={{ color: colourModes.completedTodoFontTextColor }}>{timeStarted} - {timeCompleted}</p>
                 </div>
             </div>
 

@@ -8,6 +8,11 @@ import TodoModal from './components/TodoModal';
 import { Info, Settings } from 'lucide-react';
 import CompletedTodoItem from './components/CompletedTodoItem';
 import SettingsModal from './components/SettingsModal';
+import ResetButton from './components/ResetButton';
+import InfoCard from './components/InfoCard';
+import AddButton from './components/AddButton';
+import Header from "./components/Header";
+import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
 
 
 function App() {
@@ -17,8 +22,8 @@ function App() {
   });
 
   const [todo, setTodo] = useState("");
-  const [todoColor, setTodoColor] = useState("#CBD5E1");
-  const [todoTextColor, setTodoTextColor] = useState("#000000");
+  const [todoColor, setTodoColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoColour);
+  const [todoTextColor, setTodoTextColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
   const [openModal, setOpenModal] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -82,12 +87,13 @@ function App() {
     setTodos(t => [...t, { text: todo.trim(), color: todoColor, textColor: todoTextColor, dateAdded: getCurrentDate(), timeStamp: Date.now() }]);
     
     setTodo("");
-    setTodoColor("#CBD5E1");
-    setTodoTextColor("#000000");
+    setTodoColor(DEFAULT_COLOUR_SETTINGS.automaticTodoColour);
+    setTodoTextColor(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
   }
 
   const getCurrentDate = () => {
         const date = new Date();
+        
         const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
         return formattedDate;
@@ -117,47 +123,36 @@ function App() {
 
   const [colourSettings, setColourSettings] = useState(() => {
     const settings = localStorage.getItem("Color-Settings");
-    return settings ? JSON.parse(settings) : {};
+    
+    if(settings) {
+      return JSON.parse(settings);
+    }
+
+    localStorage.setItem("Color-Settings", JSON.stringify(DEFAULT_COLOUR_SETTINGS));
+    return DEFAULT_COLOUR_SETTINGS;
   });
 
-   useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('Color-Settings', JSON.stringify(colourSettings));
   }, [colourSettings]);
 
-  const [headingBackgroundColour, setHeadingBackgroundColour] = useState("");
-
-  const handleColorSettings = () => {
-    const settings = {
-      headingBgColour: headingBackgroundColour,
-      fontHeadingColour: colourSettings.fontHeadingColour,
-      bgColour: colourSettings.bgColour,
-      cardBgColour: colourSettings.cardBgColour,
-      addButtonColour: colourSettings.addButtonColour,
-      removeButtonColour: colourSettings.removeButtonColour,
-      completedTodoColour: colourSettings.completedTodoColour,
-      automaticTodoColour: colourSettings.automaticTodoColour,
-      infoColour: colourSettings.infoColour
-    }
-
-    setColourSettings(settings);
-  }
-
   return (
     <div>
-      <div className='bg-slate-200 p-5 flex justify-between items-center text-slate-600'>
-        <h1 className='text-2xl md:text-3xl font-bold'>Todolistful</h1>
-        <button className='cursor-pointer hover:text-slate-400' onClick={() => openSettingsModal()}><Settings /></button>
-      </div>
-      <div className='min-h-screen bg-slate-100 flex flex-col md:flex-row gap-8 p-5'>
-        <div className='flex-1 bg-white rounded-2xl shadow-lg p-6'>
+      <Header 
+        openSettings={() => openSettingsModal()}
+        colorModes={colourSettings}
+      />
+
+      <div className='min-h-screen flex flex-col md:flex-row gap-8 p-5' style={{ backgroundColor: colourSettings.bgColour }}>
+        <div className='flex-1 rounded-2xl shadow-lg p-6' style={{ backgroundColor: colourSettings.cardBgColour }}>
           <div>
-            <h1 className='text-2xl md:text-3xl font-bold mb-4 text-slate-800'>Todo List</h1>
+            <h1 className='text-2xl md:text-3xl font-bold mb-4' style={{ color: colourSettings.cardHeadingColour }}>Todo List</h1>
 
             {todos.length == 0 &&
-              <div className='flex gap-2 mt-5 mb-5 border-l-2 border-blue-400 w-fit p-2'>
-                <Info className='text-blue-500' />
-                <p>Enter a todo item to begin</p>
-              </div>
+              <InfoCard 
+                textContent="Enter a todo item to begin" 
+                colourModes={colourSettings}
+              />
             }
 
             <div className='flex flex-col gap-3 md:flex-col lg:flex-row'>
@@ -169,35 +164,36 @@ function App() {
                 className='w-full md:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400'
               />
 
-              <div className='flex items-center gap-5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
+              <div className='flex items-center gap-5 border border-slate-200 rounded-lg px-3 py-2' 
+                   style={{ backgroundColor: colourSettings.bgColour }}>
                 <div className='flex items-center gap-2'>
-                  <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Background</label>
+                  <label htmlFor="bg-color" className='text-sm whitespace-nowrap' style={{ color: colourSettings.automaticTodoFontColor }}>Background</label>
                   <input 
                     id="bg-color"
                     type="color" 
-                    value={todoColor}
+                    value={colourSettings.automaticTodoColour}
                     onChange={(e) => setTodoColor(e.target.value)}
                     className='size-8 rounded border border-slate-300 cursor-pointer'
                   />
                 </div>
 
                 <div className='flex items-center gap-2'>
-                  <label htmlFor="text-color" className='text-sm text-slate-600 whitespace-nowrap'>Text</label>
+                  <label htmlFor="text-color" className='text-sm whitespace-nowrap' style={{ color: colourSettings.automaticTodoFontColor }}>Text</label>
                   <input 
                     id="text-color"
                     type="color" 
-                    value={todoTextColor}
+                    value={colourSettings.automaticTodoFontColor}
                     onChange={(e) => setTodoTextColor(e.target.value)}
                     className='size-8 rounded border border-slate-300 cursor-pointer'
                   />
                 </div>
               </div>
 
-              <button 
-                onClick={handleInput} 
-                className='cursor-pointer w-full md:w-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition'>
-                Add Todo
-              </button>
+              <AddButton 
+                handleInput={handleInput}
+                textContent="Add Todo"
+                colourModes={colourSettings}
+              />
             </div>
         </div>
 
@@ -219,26 +215,28 @@ function App() {
         </div>
 
         <div className='flex-1 bg-white rounded-2xl shadow-lg p-6'>
-          <h2 className='text-2xl md:text-3xl font-bold mb-4 text-slate-800'>Completed Todos</h2>
+          <h1 className='text-2xl md:text-3xl font-bold mb-4' style={{ color: colourSettings.cardHeadingColour }}>Completed Todos</h1>
 
           {completed.length > 0 && 
-            <div className='flex gap-2 mt-5 mb-5 border-l-2 border-blue-400 w-fit p-2'>
-                <Info className='text-blue-500'/>
-                <p>{Math.round(((completed.length) / (todos.length + completed.length) * 100), 2)}% completed</p>
-            </div>
+            <InfoCard 
+              textContent={`${Math.round(((completed.length) / (todos.length + completed.length) * 100), 2)}% completed`} 
+              colourModes={colourSettings}
+            />
           }
           
           {completed.length == 0 &&
-              <div className='flex gap-2 mt-5 mb-5 border-l-2 border-blue-400 w-fit p-2'>
-                <Info className='text-blue-500'/>
-                <p>Your completed todos will appear here</p>
-              </div>
+              <InfoCard 
+                textContent="Your completed todos will appear here"
+                colourModes={colourSettings}
+              />
           }
 
-          {completed.length > 0 && 
-            <button 
-              onClick={resetTodos} 
-              className='cursor-pointer mb-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 active:scale-95 transition'>Remove All</button>
+          {completed.length > 0 &&
+            <ResetButton 
+              resetTodos={resetTodos} 
+              textContent="Remove All"
+              colourModes={colourSettings}
+            />
           }
           
           <ul className='space-y-2 text-slate-600'>
@@ -250,25 +248,27 @@ function App() {
                 timeCompleted={element.timeCompleted} 
                 timeStampStarted={element.timeStampStarted}
                 timeStampCompleted={element.timeStampCompleted}
+                colourModes={colourSettings}
               />
             )}
           </ul>
         </div>
 
         {openModal !== null && 
-          <TodoModal 
+          <TodoModal
             item={todos[openModal].text}
             background={todos[openModal].color}
             textColor={todos[openModal].textColor}
             onSave={(newValue, newColor, newTextColor) => handleUpdate(openModal, newValue, newColor, newTextColor)} 
-            closeModal={closeModalView} 
+            closeModal={closeModalView}
+            colourModes={colourSettings}
           />
         }
 
         {openSettings &&
           <SettingsModal 
             closeModal={() => closeSettingsModal()}
-            handleSubmit={() => setColourSettings()}
+            handleSubmit={(newSettings) => setColourSettings(newSettings)}
             colorSettings={colourSettings}
           />
         }
