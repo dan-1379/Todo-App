@@ -29,23 +29,37 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         setIsInputSuccess(true);
     };
 
+    useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        };
+        
+        window.addEventListener('keydown', handleEsc);
+
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+        };
+    }, []);
+
     return (
         <>
             <div className="bg-black/60 fixed inset-0 z-10 opacity-900" onClick={closeModal}></div>
 
             <div className="text-center md:text-left bg-white fixed inset-[3em] flex flex-col z-20 self-center m-[2em] rounded-xl p-10 lg:w-1/2 ml-auto mr-auto">
                 <div className="flex flex-row justify-between items-center">
-                    <h2 className="text-xl md:text-2xl font-bold mb-4 text-slate-800">Settings</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-600">Settings</h2>
                     <button className="cursor-pointer absolute top-1 right-0 size-10 hover:text-white text-slate-500 rounded-full hover:bg-red-600 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={closeModal}><X size={20}/></button>
                 </div>
 
-                <hr className="mb-5 text-slate-300 w-full h-[1px]" />
+                <hr className="mb-5 border-none bg-slate-400 w-full h-[2px]" />
 
                 <form onSubmit={onSubmit} className="flex flex-col gap-5 h-90">
                     <div className="overflow-y-scroll flex flex-col gap-3 h-fit text-wrap">
                         <div>
                             <h3>Heading Colours</h3>
-                            <hr />
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="heading-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Heading background</label>
@@ -71,7 +85,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
                         <div>
                             <h3>Background Colours</h3>
-                            <hr />
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Page background</label>
@@ -108,7 +122,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
                         <div>
                             <h3>Button Colours</h3>
-                            <hr />
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="add-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Add button background</label>
@@ -134,7 +148,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
                         <div>
                             <h3>Todo Colours</h3>
-                            <hr />
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="completed-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed todo background</label>
@@ -193,7 +207,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
                         <div>
                             <h3>Info Colours</h3>
-                            <hr />
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Info icon</label>
@@ -229,7 +243,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
                     </div>
 
-                    <hr className="mb-5 text-slate-300 w-full h-[1px]" />
+                    <hr className="mb-5 border-none bg-slate-400 w-full h-[2px]" />
 
                     <div className="flex flex-row md:flex-row gap-5 justify-center sm:flex-row">
                         <input type="submit" value="Save" className='cursor-pointer w-1/2 md:w-1/4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition' />

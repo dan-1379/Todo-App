@@ -171,7 +171,7 @@ function App() {
                   <input 
                     id="bg-color"
                     type="color" 
-                    value={colourSettings.automaticTodoColour}
+                    value={todoColor}
                     onChange={(e) => setTodoColor(e.target.value)}
                     className='size-8 rounded border border-slate-300 cursor-pointer'
                   />
@@ -182,7 +182,7 @@ function App() {
                   <input 
                     id="text-color"
                     type="color" 
-                    value={colourSettings.automaticTodoFontColor}
+                    value={todoTextColor}
                     onChange={(e) => setTodoTextColor(e.target.value)}
                     className='size-8 rounded border border-slate-300 cursor-pointer'
                   />

@@ -13,9 +13,9 @@ function ListItem(props) {
             </div>
 
             <div className='flex gap-0.5'>
-                <button onClick={props.onView} className="cursor-pointer hover:scale-110 px-3 py-1 rounded-md duration-300 ease-in-out"><SquarePen size={20} /></button>
-                <button onClick={props.onComplete} className="cursor-pointer hover:scale-110 px-3 py-1 rounded-md duration-300 ease-in-out"><Check size={20} /></button>
-                <button onClick={props.onDelete} className="cursor-pointer hover:scale-110 px-3 py-1 rounded-md duration-300 ease-in-out"><Trash size={20} /></button>
+                <button onClick={props.onView}  title="Edit Todo" className="cursor-pointer hover:scale-110 px-3 py-1 rounded-md duration-300 ease-in-out"><SquarePen size={20} /></button>
+                <button onClick={props.onComplete} title="Complete Todo" className="cursor-pointer hover:scale-110 hover:bg-green-500 hover:text-white px-3 py-1 rounded-md duration-300 ease-in-out"><Check size={20} /></button>
+                <button onClick={props.onDelete} title="Delete Todo" className="cursor-pointer hover:scale-105 hover:bg-red-500 hover:text-white px-3 py-1 rounded-md duration-300 ease-in-out"><Trash size={20} /></button>
             </div>
         </li>
     )

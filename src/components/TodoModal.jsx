@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validInput } from "../regex";
 import InputError from "./InputError";
 import InputWarning from './InputWarning';
@@ -29,6 +29,20 @@ const TodoModal = ({ item, background, textColor, closeModal, onSave, colourMode
 
         onSave(todo, todoColor, todoTextColor);
     }
+
+    useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        };
+        
+        window.addEventListener('keydown', handleEsc);
+
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+        };
+    }, []);
 
     return (
         <>
