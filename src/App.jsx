@@ -148,7 +148,7 @@ function App() {
           <div>
             <h1 className='text-2xl md:text-3xl font-bold mb-4' style={{ color: colourSettings.cardHeadingColour }}>Todo List</h1>
 
-            {todos.length == 0 &&
+            {todos.length == 0 && completed.length == 0 &&
               <InfoCard 
                 textContent="Enter a todo item to begin" 
                 colourModes={colourSettings}
@@ -167,7 +167,7 @@ function App() {
               <div className='flex items-center gap-5 border border-slate-200 rounded-lg px-3 py-2' 
                    style={{ backgroundColor: colourSettings.bgColour }}>
                 <div className='flex items-center gap-2'>
-                  <label htmlFor="bg-color" className='text-sm whitespace-nowrap' style={{ color: colourSettings.automaticTodoFontColor }}>Background</label>
+                  <label htmlFor="bg-color" className='text-sm whitespace-nowrap text-slate-500'>Background</label>
                   <input 
                     id="bg-color"
                     type="color" 
@@ -178,7 +178,7 @@ function App() {
                 </div>
 
                 <div className='flex items-center gap-2'>
-                  <label htmlFor="text-color" className='text-sm whitespace-nowrap' style={{ color: colourSettings.automaticTodoFontColor }}>Text</label>
+                  <label htmlFor="text-color" className='text-sm whitespace-nowrap text-slate-500'>Text</label>
                   <input 
                     id="text-color"
                     type="color" 

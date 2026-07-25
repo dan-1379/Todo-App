@@ -11,5 +11,7 @@ export const DEFAULT_COLOUR_SETTINGS = {
     completedTodoFontTextColor: "#90a1b9",
     automaticTodoColour: "#cbd5e1",
     automaticTodoFontColor: "#000000",
-    infoColour: "#2b7fff"
+    infoColour: "#2b7fff",
+    infoBgColour: "#f1f5f9",
+    infoFontColor: "#000000"
 };

@@ -21,7 +21,6 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         e.preventDefault();
         handleSubmit(settings);
         setIsInputSuccess(true);
-        // closeModal();
     };
 
     const resetColorValues = () => {
@@ -30,26 +29,9 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         setIsInputSuccess(true);
     };
 
-   useEffect(() => {
-        if (!isInputSuccess) return;
-
-        const timer = setTimeout(() => {
-            setIsInputSuccess(false);
-        }, 10000);
-
-        return () => clearTimeout(timer);
-    }, [isInputSuccess]);
-
     return (
         <>
             <div className="bg-black/60 fixed inset-0 z-10 opacity-900" onClick={closeModal}></div>
-
-            {/* <div className="bg-black/50 fixed inset-0 z-30 text-white p-5 mt-auto mb-auto min-h-screen flex justify-center items-center">
-                <div className="text-3xl flex gap-2 items-center bg-red-400 px-3 py-6 rounded-lg relative">
-                    <h2 className="flex gap-2 items-center"><Info />Personalisation coming soon...</h2>
-                    <button className="cursor-pointer absolute top-2 right-2 hover:bg-white hover:text-red-400 rounded-xl" onClick={closeModal}><X /></button>
-                </div>
-            </div> */}
 
             <div className="text-center md:text-left bg-white fixed inset-[3em] flex flex-col z-20 self-center m-[2em] rounded-xl p-10 lg:w-1/2 ml-auto mr-auto">
                 <div className="flex flex-row justify-between items-center">
@@ -60,13 +42,13 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                 <hr className="mb-5 text-slate-300 w-full h-[1px]" />
 
                 <form onSubmit={onSubmit} className="flex flex-col gap-5 h-90">
-                    <div className="overflow-y-scroll flex flex-col gap-3">
+                    <div className="overflow-y-scroll flex flex-col gap-3 h-fit text-wrap">
                         <div>
                             <h3>Heading Colours</h3>
                             <hr />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="heading-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Heading background colour</label>
+                            <label htmlFor="heading-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Heading background</label>
                             <input
                                 id="heading-bg-color"
                                 type="color" 
@@ -77,7 +59,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="font-heading-color" className='text-sm text-slate-600 whitespace-nowrap'>Font heading colour</label>
+                            <label htmlFor="font-heading-color" className='text-sm text-slate-600 whitespace-nowrap'>Heading font</label>
                             <input
                                 id="font-heading-color"
                                 type="color" 
@@ -92,7 +74,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                             <hr />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Background colour</label>
+                            <label htmlFor="bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Page background</label>
                             <input
                                 id="bg-color"
                                 type="color" 
@@ -103,7 +85,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="card-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Card background colour</label>
+                            <label htmlFor="card-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Card background</label>
                             <input 
                                 id="card-bg-color"
                                 type="color" 
@@ -114,7 +96,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="heading-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Card heading colour</label>
+                            <label htmlFor="heading-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Card heading</label>
                             <input
                                 id="heading-bg-color"
                                 type="color" 
@@ -129,7 +111,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                             <hr />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="add-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Add button colour</label>
+                            <label htmlFor="add-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Add button background</label>
                             <input 
                                 id="add-bg-color"
                                 type="color" 
@@ -140,7 +122,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="remove-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Remove button colour</label>
+                            <label htmlFor="remove-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Remove button background</label>
                             <input
                                 id="remove-bg-color"
                                 type="color" 
@@ -155,7 +137,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                             <hr />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="completed-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed todo colour</label>
+                            <label htmlFor="completed-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed todo background</label>
                             <input 
                                 id="completed-bg-color"
                                 type="color" 
@@ -166,7 +148,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="completedfont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed font heading colour</label>
+                            <label htmlFor="completedfont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed font heading</label>
                             <input 
                                 id="completedfont-bg-color"
                                 type="color" 
@@ -177,7 +159,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="completedfont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed font text colour</label>
+                            <label htmlFor="completedfont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Completed font text</label>
                             <input 
                                 id="completedfont-bg-color"
                                 type="color" 
@@ -188,7 +170,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="auto-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Automatic todo colour</label>
+                            <label htmlFor="auto-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Automatic todo background</label>
                             <input 
                                 id="auto-bg-color"
                                 type="color" 
@@ -199,7 +181,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="autofont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Automatic todo font colour</label>
+                            <label htmlFor="autofont-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Automatic todo font</label>
                             <input 
                                 id="autofont-bg-color"
                                 type="color" 
@@ -214,12 +196,34 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                             <hr />
                         </div>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
-                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Info colour</label>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Info icon</label>
                             <input
                                 id="info-bg-color"
                                 type="color" 
                                 value={settings.infoColour}
                                 onChange={updateField("infoColour")}
+                                className='size-8 rounded border border-slate-300 cursor-pointer'
+                            />
+                        </div>
+
+                        <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Info background</label>
+                            <input
+                                id="info-bg-color"
+                                type="color" 
+                                value={settings.infoBgColour}
+                                onChange={updateField("infoBgColour")}
+                                className='size-8 rounded border border-slate-300 cursor-pointer'
+                            />
+                        </div>
+
+                        <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Info font</label>
+                            <input
+                                id="info-bg-color"
+                                type="color" 
+                                value={settings.infoFontColor}
+                                onChange={updateField("infoFontColor")}
                                 className='size-8 rounded border border-slate-300 cursor-pointer'
                             />
                         </div>
