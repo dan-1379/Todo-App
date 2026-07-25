@@ -4,6 +4,7 @@ import { X, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { DEFAULT_COLOUR_SETTINGS } from "../constants/colourSettings";
 import InputSuccess from "./InputSuccess";
+import InputProcessing from "./InputProcessing";
 
 const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
     const [settings, setSettings] = useState({
@@ -11,7 +12,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         ...colorSettings
     });
 
-    const [isInputSuccess, setIsInputSuccess] = useState(false);
+    const [status, setStatus] = useState("idle");
 
      const updateField = (field) => (e) => {
         setSettings(s => ({ ...s, [field]: e.target.value }));
@@ -20,13 +21,21 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
     const onSubmit = (e) => {
         e.preventDefault();
         handleSubmit(settings);
-        setIsInputSuccess(true);
+        setStatus("processing");
+
+        setInterval(() => {
+            setStatus("success");
+        }, 1000);
     };
 
     const resetColorValues = () => {
         setSettings(DEFAULT_COLOUR_SETTINGS);
         handleSubmit(DEFAULT_COLOUR_SETTINGS);
-        setIsInputSuccess(true);
+        setStatus("processing");
+
+         setInterval(() => {
+            setStatus("success");
+        }, 1000);
     };
 
     useEffect(() => {
@@ -252,7 +261,14 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                 </form>
 
                 <div className='fixed inset-x-3 bottom-10 sm:left-auto sm:right-10 sm:w-md'>
-                    {isInputSuccess && <InputSuccess closeSuccess={() => setIsInputSuccess(false)} textContent="Your changes have been saved successfully" />}
+                    {status === "processing" && <InputProcessing />}
+                    
+                    {status === "success" && (
+                        <InputSuccess 
+                            closeSuccess={() => setStatus("idle")} 
+                            textContent="Your changes have been saved successfully" 
+                        />
+                    )}
                 </div>
             </div>
         </>

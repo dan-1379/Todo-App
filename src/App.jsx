@@ -13,6 +13,8 @@ import InfoCard from './components/InfoCard';
 import AddButton from './components/AddButton';
 import Header from "./components/Header";
 import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
+import ConfirmationDialog from './components/ConfirmationDialog';
+import InputSuccess from './components/InputSuccess';
 
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
   const [todoTextColor, setTodoTextColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
   const [openModal, setOpenModal] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const openModalView = (item) => {
     setOpenModal(item);
@@ -97,10 +101,12 @@ function App() {
         const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
         return formattedDate;
-    }
+  }
 
-  function handleDelete(index) {
+  const deleteTodoItem = (index) => {
     setTodos(todos.filter((_, i) => i !== index));
+    setPendingDelete(null);
+    setSuccessMessage("Todo item deleted successfully");
   }
 
   function handleComplete(index) {
@@ -115,6 +121,24 @@ function App() {
     setTodos(todos.filter((_, i) => i !== index));
     setCompleted(c => [...c, completed]);
   }
+
+  const handleDelete = (index) => {
+    setPendingDelete({ type: 'todo', index });
+  }
+
+  const handleResetItems = () => {
+    setPendingDelete({ type: 'resetCompleted' });
+  }
+
+  const confirmPendingDelete = () => {
+    if (pendingDelete.type === 'todo') {
+        deleteTodoItem(pendingDelete.index);
+    } else if (pendingDelete.type === 'resetCompleted') {
+        resetTodos();
+        setPendingDelete(null);
+        setSuccessMessage("Completed todos cleared successfully");
+    }
+}
 
   function resetTodos() {
     setCompleted([]);
@@ -233,7 +257,7 @@ function App() {
 
           {completed.length > 0 &&
             <ResetButton 
-              resetTodos={resetTodos} 
+              resetTodos={handleResetItems} 
               textContent="Remove All"
               colourModes={colourSettings}
             />
@@ -272,11 +296,24 @@ function App() {
             colorSettings={colourSettings}
           />
         }
+
+        {pendingDelete &&
+          <ConfirmationDialog 
+            headerText={pendingDelete.type === 'todo' ? "Delete this todo?" : "Remove all completed todos?"}
+            confirmationText={pendingDelete.type === 'todo'
+                  ? "Are you sure you wish to delete this todo item?"
+                  : "This will clear your entire completed list. Are you sure you want to continue?"}
+            itemForDeletion={pendingDelete.type === 'todo' ? todos[pendingDelete.index]?.text : null}
+            onCancel={() => setPendingDelete(null)}
+            onConfirm={confirmPendingDelete}
+          />
+}
       </div>
 
-      <div className='fixed inset-x-3 bottom-10 sm:left-auto sm:right-10 sm:w-md'>
+      <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md'>
           {inputError && <InputError closeError={() => setInputError(false)} />} 
-          {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />} 
+          {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />}
+          {successMessage && <InputSuccess closeSuccess={() => setSuccessMessage("")} textContent={successMessage} />}
       </div>
     </div>
   )
