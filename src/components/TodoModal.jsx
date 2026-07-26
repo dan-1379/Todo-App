@@ -44,6 +44,14 @@ const TodoModal = ({ item, background, textColor, closeModal, onSave, colourMode
         };
     }, []);
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
+
     return (
         <>
             <div className="bg-black/70 fixed inset-0 z-10 opacity-900" onClick={closeModal}></div>

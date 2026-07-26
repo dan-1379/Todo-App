@@ -23,7 +23,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         handleSubmit(settings);
         setStatus("processing");
 
-        setInterval(() => {
+        setTimeout(() => {
             setStatus("success");
         }, 1000);
     };
@@ -33,7 +33,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
         handleSubmit(DEFAULT_COLOUR_SETTINGS);
         setStatus("processing");
 
-         setInterval(() => {
+        setTimeout(() => {
             setStatus("success");
         }, 1000);
     };
@@ -49,6 +49,14 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
         return () => {
             window.removeEventListener('keydown', handleEsc);
+        };
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = '';
         };
     }, []);
 
@@ -260,13 +268,13 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                     </div>
                 </form>
 
-                <div className='fixed inset-x-3 bottom-10 sm:left-auto sm:right-10 sm:w-md'>
+                <div className='fixed inset-x-3 bottom-0 sm:left-auto sm:right-10 sm:w-md'>
                     {status === "processing" && <InputProcessing />}
                     
                     {status === "success" && (
                         <InputSuccess 
                             closeSuccess={() => setStatus("idle")} 
-                            textContent="Your changes have been saved successfully" 
+                            textContent="Your changes have been saved" 
                         />
                     )}
                 </div>
