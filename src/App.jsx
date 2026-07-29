@@ -15,6 +15,8 @@ import Header from "./components/Header";
 import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import InputSuccess from './components/InputSuccess';
+import FilterButton from './components/FilterButton';
+import FilterModal from './components/FilterModal';
 
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
   const [todo, setTodo] = useState("");
   const [todoColor, setTodoColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoColour);
   const [todoTextColor, setTodoTextColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
+  const [todoPriority, setTodoPriority] = useState("low");
   const [openModal, setOpenModal] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
@@ -47,10 +50,10 @@ function App() {
     setOpenSettings(false);
   }
 
-  const handleUpdate = (index, newValue, newColor, newTextColor) => {
-    setTodos(todos.map((t, i) => 
-      (i === index 
-        ? { ...t, text: newValue, color: newColor, textColor: newTextColor } 
+  const handleUpdate = (id, newValue, newColor, newTextColor, newPriority) => {
+    setTodos(todos.map((t) => 
+      (t.id === id 
+        ? { ...t, text: newValue, color: newColor, textColor: newTextColor, priority: newPriority } 
         : t
       )
     ));
@@ -74,56 +77,51 @@ function App() {
     localStorage.setItem("Completed-Items", JSON.stringify(completed));
   }, [completed]);
 
-  function handleInput() {
-    setInputError(false);
-    setInputWarning(false);
+  function handleInput(newValue, newColor, newTextColor, newPriority) {  
+    setTodos(t => [...t, { 
+      id: crypto.randomUUID(),
+      text: newValue.trim(), 
+      color: newColor, 
+      textColor: newTextColor, 
+      priority: newPriority,
+      dateAdded: getCurrentDate(), 
+      timeStamp: Date.now() 
+    }]);
 
-    if (todo.trim() === ""){
-      setInputWarning(true);
-      return;
-    }
-
-    if (!validInput.test(todo)) {
-      setInputError(true);
-      return;
-    }
-    
-    setTodos(t => [...t, { text: todo.trim(), color: todoColor, textColor: todoTextColor, dateAdded: getCurrentDate(), timeStamp: Date.now() }]);
-    
-    setTodo("");
-    setTodoColor(DEFAULT_COLOUR_SETTINGS.automaticTodoColour);
-    setTodoTextColor(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
+    closeAddModal();
   }
 
   const getCurrentDate = () => {
-        const date = new Date();
-        
-        const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
-        return formattedDate;
+    const date = new Date();
+    
+    const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
+    return formattedDate;
   }
 
-  const deleteTodoItem = (index) => {
-    setTodos(todos.filter((_, i) => i !== index));
+  const deleteTodoItem = (id) => {
+    setTodos(todos.filter((t) => t.id !== id));
     setPendingDelete(null);
     setSuccessMessage("Todo item deleted successfully");
   }
 
-  function handleComplete(index) {
-    const completed = {
-      item: todos[index].text,
-      timeStarted: todos[index].dateAdded,
+  function handleComplete(id) {
+    const todo = todos.find(t => t.id === id);
+
+    const completedItem = {
+      item: todo.text,
+      timeStarted: todo.dateAdded,
       timeCompleted: getCurrentDate(),
-      timeStampStarted: todos[index].timeStamp,
+      timeStampStarted: todo.timeStamp,
       timeStampCompleted: Date.now()
     };
 
-    setTodos(todos.filter((_, i) => i !== index));
-    setCompleted(c => [...c, completed]);
+    setTodos(todos.filter((t) => t.id !== id));
+    setCompleted(c => [...c, completedItem]);
   }
 
-  const handleDelete = (index) => {
-    setPendingDelete({ type: 'todo', index });
+  const handleDelete = (id) => {
+    setPendingDelete({ type: 'todo', id });
   }
 
   const handleResetItems = () => {
@@ -132,7 +130,7 @@ function App() {
 
   const confirmPendingDelete = () => {
     if (pendingDelete.type === 'todo') {
-        deleteTodoItem(pendingDelete.index);
+        deleteTodoItem(pendingDelete.id);
     } else if (pendingDelete.type === 'resetCompleted') {
         resetTodos();
         setPendingDelete(null);
@@ -160,6 +158,31 @@ function App() {
     localStorage.setItem('Color-Settings', JSON.stringify(colourSettings));
   }, [colourSettings]);
 
+  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+
+  const openAddModal = () => {
+    setIsOpenAddModal(true);
+  }
+
+  const closeAddModal = () => {
+    setIsOpenAddModal(false);
+  }
+
+  const [filterOption, setFilterOption] = useState(null);
+  const [isOpenFilter, setIsOpenFilter] = useState(false);
+
+  const handleFilterModal = () => {
+    setIsOpenFilter(!isOpenFilter);
+  }
+
+  const handleFilterOption = (option) => {
+    setFilterOption(option);
+  }
+
+  const filteredTodos = filterOption
+    ? todos.filter(todo => todo.priority === filterOption)
+    : todos;
+
   return (
     <div>
       <Header 
@@ -172,68 +195,69 @@ function App() {
           <div>
             <h1 className='text-2xl md:text-3xl font-bold mb-4' style={{ color: colourSettings.cardHeadingColour }}>Todo List</h1>
 
-            {todos.length == 0 && completed.length == 0 &&
+            {todos.length == 0 && completed.length == 0 ?
               <InfoCard 
                 textContent="Enter a todo item to begin" 
                 colourModes={colourSettings}
               />
+              :
+              <InfoCard 
+                textContent={`Todo items for completion: ${todos.length}`}
+                colourModes={colourSettings}
+              />
             }
 
-            <div className='flex flex-col gap-3 md:flex-col lg:flex-row'>
-              <input 
-                type='text' 
-                placeholder='Enter a todo...'
-                value={todo}
-                onChange={(e) => setTodo(e.target.value)}
-                className='w-full md:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400'
-              />
+            <div className='flex gap-2 justify-end items-end'>
+              <div className='relative'>
+                {todos.length > 0 && <FilterButton handleInput={() => handleFilterModal()}/>}
 
-              <div className='flex items-center gap-5 border border-slate-200 rounded-lg px-3 py-2' 
-                   style={{ backgroundColor: colourSettings.bgColour }}>
-                <div className='flex items-center gap-2'>
-                  <label htmlFor="bg-color" className='text-sm whitespace-nowrap text-slate-500'>Background</label>
-                  <input 
-                    id="bg-color"
-                    type="color" 
-                    value={todoColor}
-                    onChange={(e) => setTodoColor(e.target.value)}
-                    className='size-8 rounded border border-slate-300 cursor-pointer'
-                  />
-                </div>
-
-                <div className='flex items-center gap-2'>
-                  <label htmlFor="text-color" className='text-sm whitespace-nowrap text-slate-500'>Text</label>
-                  <input 
-                    id="text-color"
-                    type="color" 
-                    value={todoTextColor}
-                    onChange={(e) => setTodoTextColor(e.target.value)}
-                    className='size-8 rounded border border-slate-300 cursor-pointer'
-                  />
-                </div>
+                {isOpenFilter && <FilterModal handleInput={handleFilterOption}/>}
               </div>
 
               <AddButton 
-                handleInput={handleInput}
-                textContent="Add Todo"
+                handleInput={openAddModal}
+                textContent="Add new todo"
                 colourModes={colourSettings}
+                className=""
               />
             </div>
         </div>
 
           <div>
             <ul className='my-2'>
-              {todos.map((element, index) => 
+              {/* {filteredTodos.length > 0
+                ? filteredTodos.map((element) => 
                 <ListItem 
+                  key={element.id}
                   name={element.text} 
                   color={element.color}
                   textColor={element.textColor}
                   dateAdded={element.dateAdded}
-                  key={index}
-                  onView={() => openModalView(index)}
-                  onComplete={() => handleComplete(index)}
-                  onDelete={() => handleDelete(index)}/>
-              )}
+                  priority={element.priority}
+                  onView={() => openModalView(element.id)}
+                  onComplete={() => handleComplete(element.id)}
+                  onDelete={() => handleDelete(element.id)}/>
+              )
+              : <InfoCard 
+                  textContent={filterOption ? `No ${filterOption} todos` : "No todos"} 
+                  colourModes={colourSettings}
+                />
+            } */}
+
+            {filteredTodos.map((element) => 
+              <ListItem 
+                key={element.id}
+                name={element.text} 
+                color={element.color}
+                textColor={element.textColor}
+                dateAdded={element.dateAdded}
+                priority={element.priority}
+                onView={() => openModalView(element.id)}
+                onComplete={() => handleComplete(element.id)}
+                onDelete={() => handleDelete(element.id)}
+              />
+              )
+            }
             </ul>
           </div>
         </div>
@@ -264,7 +288,7 @@ function App() {
           }
           
           <ul className='space-y-2 text-slate-600'>
-            {completed.sort().map((element, index) => 
+            {completed.map((element, index) => 
               <CompletedTodoItem 
                 key={index} 
                 item={element.item} 
@@ -280,11 +304,26 @@ function App() {
 
         {openModal !== null && 
           <TodoModal
-            item={todos[openModal].text}
-            background={todos[openModal].color}
-            textColor={todos[openModal].textColor}
-            onSave={(newValue, newColor, newTextColor) => handleUpdate(openModal, newValue, newColor, newTextColor)} 
+            action="Edit"
+            item={todos.find(t => t.id === openModal)?.text}
+            background={todos.find(t => t.id === openModal)?.color}
+            textColor={todos.find(t => t.id === openModal)?.textColor}
+            priority={todos.find(t => t.id === openModal)?.priority}
+            onSave={(newValue, newColor, newTextColor, newPriority) => handleUpdate(openModal, newValue, newColor, newTextColor, newPriority)} 
             closeModal={closeModalView}
+            colourModes={colourSettings}
+          />
+        }
+
+        {isOpenAddModal && 
+          <TodoModal 
+            action="Add"
+            item=""
+            background={todoColor}
+            textColor={todoTextColor}
+            priority={todoPriority}
+            onSave={handleInput} 
+            closeModal={closeAddModal}
             colourModes={colourSettings}
           />
         }
@@ -303,14 +342,14 @@ function App() {
             confirmationText={pendingDelete.type === 'todo'
                   ? "Are you sure you wish to delete this todo item?"
                   : "This will clear your entire completed list. Are you sure you want to continue?"}
-            itemForDeletion={pendingDelete.type === 'todo' ? todos[pendingDelete.index]?.text : null}
+            itemForDeletion={pendingDelete.type === 'todo' ? todos.find(t => t.id === pendingDelete.id)?.text : null}
             onCancel={() => setPendingDelete(null)}
             onConfirm={confirmPendingDelete}
           />
 }
       </div>
 
-      <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md'>
+      <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md z-30'>
           {inputError && <InputError closeError={() => setInputError(false)} />} 
           {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />}
           {successMessage && <InputSuccess closeSuccess={() => setSuccessMessage("")} textContent={successMessage} />}

@@ -19,7 +19,7 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
     };
 
     const onSubmit = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         handleSubmit(settings);
         setStatus("processing");
 
@@ -59,6 +59,20 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
             document.body.style.overflow = '';
         };
     }, []);
+
+    useEffect(() => {
+        const handleEnterKeyPress = (event) => {
+            if (event.key === 'Enter') {
+                onSubmit();
+            }
+        }
+
+        window.addEventListener('keydown', handleEnterKeyPress);
+
+        return () => {
+            window.removeEventListener('keydown', handleEnterKeyPress);
+        };
+    }, [settings]);
 
     return (
         <>
@@ -263,12 +277,12 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                     <hr className="mb-5 border-none bg-slate-400 w-full h-[2px]" />
 
                     <div className="flex flex-row md:flex-row gap-5 justify-center sm:flex-row">
-                        <input type="submit" value="Save" className='cursor-pointer w-1/2 md:w-1/4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition' />
                         <input type="button" value="Reset" onClick={resetColorValues} className="cursor-pointer bg-none text-slate-500 border border-slate-200 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white active:scale-95 transition" />
+                        <input type="submit" value="Save" className='cursor-pointer w-1/2 md:w-1/4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition' />
                     </div>
                 </form>
 
-                <div className='fixed inset-x-3 bottom-0 sm:left-auto sm:right-10 sm:w-md'>
+                <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md'>
                     {status === "processing" && <InputProcessing />}
                     
                     {status === "success" && (

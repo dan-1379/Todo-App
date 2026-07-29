@@ -9,6 +9,34 @@ const ConfirmationDialog = ({ headerText, confirmationText, itemForDeletion, onC
             document.body.style.overflow = '';
         };
     }, []);
+
+    useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') {
+                onCancel();
+            }
+        };
+        
+        window.addEventListener('keydown', handleEsc);
+
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+        };
+    }, [onCancel]);
+
+    useEffect(() => {
+        const handleEnterKeyPress = (event) => {
+            if (event.key === 'Enter') {
+                onConfirm();
+            }
+        }
+
+        window.addEventListener('keydown', handleEnterKeyPress);
+
+        return () => {
+            window.removeEventListener('keydown', handleEnterKeyPress);
+        };
+    }, [onConfirm]);
     
     return (
         <>
