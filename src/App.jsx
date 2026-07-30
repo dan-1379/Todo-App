@@ -163,6 +163,7 @@ function App() {
   }, [colourSettings]);
 
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  const [isOpenViewModal, setIsOpenViewModal] = useState(null);
 
   const openAddModal = () => {
     setIsOpenAddModal(true);
@@ -170,6 +171,14 @@ function App() {
 
   const closeAddModal = () => {
     setIsOpenAddModal(false);
+  }
+
+  const openViewModal = (item) => {
+    setIsOpenViewModal(item);
+  }
+
+  const closeViewModal = () => {
+    setIsOpenViewModal(null);
   }
 
   const [filterOption, setFilterOption] = useState(null);
@@ -240,11 +249,18 @@ function App() {
                   dateAdded={element.dateAdded}
                   priority={element.priority}
                   onView={() => openModalView(element.id)}
+                  onViewDetails={() => openViewModal(element.id)}
                   onComplete={() => handleComplete(element.id)}
                   onDelete={() => handleDelete(element.id)}
                 />
               )}
             </ul>
+
+            {filteredTodos.length == 0 && filterOption && 
+              <div className='bg-slate-200 p-2 rounded-sm text-left my-5'>
+              <p>No <span className='font-bold'>{filterOption}</span> priority todos</p>
+              </div>
+            }
           </div>
         </div>
 
@@ -266,11 +282,13 @@ function App() {
           }
 
           {completed.length > 0 &&
-            <ResetButton 
-              resetTodos={handleResetItems} 
-              textContent="Remove All"
-              colourModes={colourSettings}
-            />
+            <div className='flex justify-end'>
+              <ResetButton 
+                resetTodos={handleResetItems} 
+                textContent="Remove All"
+                colourModes={colourSettings}
+              />
+            </div>
           }
           
           <ul className='space-y-2 text-slate-600'>
@@ -293,11 +311,11 @@ function App() {
             action="Edit"
             icon={todos.find(t => t.id === openModal)?.icon}
             item={todos.find(t => t.id === openModal)?.text}
-            todoNotes={todos.find(t => t.id === openModal)?.notes}
+            notes={todos.find(t => t.id === openModal)?.notes}
             background={todos.find(t => t.id === openModal)?.color}
             textColor={todos.find(t => t.id === openModal)?.textColor}
             priority={todos.find(t => t.id === openModal)?.priority}
-            onSave={(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => handleUpdate(openModal, newValue, newColor, newNotes, newTextColor, newPriority, newIcon, newNotes)} 
+            onSave={(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => handleUpdate(openModal, newValue, newNotes, newColor, newTextColor, newPriority, newIcon)} 
             closeModal={closeModalView}
             colourModes={colourSettings}
           />
@@ -314,6 +332,21 @@ function App() {
             priority={todoPriority}
             onSave={handleInput} 
             closeModal={closeAddModal}
+            colourModes={colourSettings}
+          />
+        }
+
+        {isOpenViewModal !== null && 
+          <TodoModal 
+            action="View"
+            icon={todos.find(t => t.id === isOpenViewModal)?.icon}
+            item={todos.find(t => t.id === isOpenViewModal)?.text}
+            notes={todos.find(t => t.id === isOpenViewModal)?.notes}
+            background={todos.find(t => t.id === isOpenViewModal)?.color}
+            textColor={todos.find(t => t.id === isOpenViewModal)?.textColor}
+            priority={todos.find(t => t.id === isOpenViewModal)?.priority}
+            onSave={() => {}} 
+            closeModal={() => closeViewModal()}
             colourModes={colourSettings}
           />
         }

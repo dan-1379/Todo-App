@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 
 const CompletedTodoItem = ({ item, timeStarted, timeCompleted, timeStampStarted, timeStampCompleted, colourModes }) => {
      const formatDuration = (ms) => {
@@ -21,7 +21,7 @@ const CompletedTodoItem = ({ item, timeStarted, timeCompleted, timeStampStarted,
             style={{backgroundColor: colourModes.completedTodoColour, color: colourModes.completedTodoFontHeadingColor }}
         >
             <div className='flex gap-2 justify-center items-center'>
-                <Check size={20} className="text-slate-400" style={{ color: colourModes.completedTodoFontHeadingColor }}/>
+                <CircleCheck size={20} className="text-slate-400" style={{ color: colourModes.completedTodoFontHeadingColor }}/>
 
                 <div className='flex flex-col'>
                     <p className='font-semibold text-md' style={{ color: colourModes.completedTodoFontHeadingColor }}>{item}</p> 

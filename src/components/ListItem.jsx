@@ -15,21 +15,22 @@ function ListItem(props) {
 
     const [itemOptionsOpen, setItemOptionsOpen] = useState(false);
 
-    const handleItemOptionsModal = () => {
+    const handleItemOptionsModal = (item) => {
         setItemOptionsOpen(!itemOptionsOpen);
     }
 
     return (
         <li style={{ backgroundColor: props.color, color: props.textColor }} className="flex items-center justify-between rounded-lg px-4 py-3 my-5 relative">
             <div className='flex gap-2 justify-center items-center'>
-                <IconComponent size={20} className="shrink-0"/>
-
+                <div className="shrink-0 bg-white text-black p-2 rounded-md">
+                    <IconComponent size={20}/>
+                </div>
                 <div className='flex gap-1'>
                     <div>
                         {priority && (
                             <span 
-                                className='inline-block rounded-full'
-                                style={{ backgroundColor: priority.color, width: '8px', height: '8px' }}
+                                className='inline-block rounded-full w-3 h-3'
+                                style={{ backgroundColor: priority.color }}
                                 title={priority.text}
                             />
                         )}
@@ -51,6 +52,7 @@ function ListItem(props) {
                     <ItemOptionsModal 
                         onClose={() => handleItemOptionsModal()}
                         onEdit={props.onView}
+                        onView={props.onViewDetails}
                         onComplete={props.onComplete}
                         onDelete={props.onDelete}
                     />

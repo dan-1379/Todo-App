@@ -130,6 +130,7 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                             <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
                             
                             <select
+                                disabled={action === "View"}
                                 name="todoIcon" 
                                 id="todoIcon" 
                                 value={todoIcon}
@@ -158,7 +159,8 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                     
                     <div>
                         <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
-                        <input 
+                        <input
+                            disabled={action === "View"}
                             autoFocus
                             type="text" 
                             id="todoItem" 
@@ -171,7 +173,8 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
 
                     <div>
                         <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
-                        <textarea 
+                        <textarea
+                            disabled={action === "View"}
                             name="todoNotes" 
                             id="todoNotes" 
                             cols="10" 
@@ -186,7 +189,8 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                     <div>
                         <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
                 
-                        <select 
+                        <select
+                            disabled={action === "View"}
                             name="todoPriority" 
                             id="todoPriority" 
                             value={todoPriority}
@@ -203,7 +207,8 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                         <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
                             <div className='flex items-center gap-2'>
                                 <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
-                                <input 
+                                <input
+                                    disabled={action === "View"} 
                                     id="bg-color"
                                     type="color" 
                                     value={todoColor}
@@ -214,7 +219,8 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
 
                             <div className='flex items-center gap-2'>
                                 <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Text</label>
-                                <input 
+                                <input
+                                    disabled={action === "View"}
                                     id="text-color"
                                     type="color" 
                                     value={todoTextColor}
@@ -226,9 +232,28 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                     </div>
 
                     <div className="flex justify-center sm:justify-end gap-2 w-full">
-                        <button type="button" onClick={closeModal} className="w-30 cursor-pointer bg-slate-100 text-black px-4 py-2 rounded-lg hover:bg-slate-200 active:scale-95 transition">Cancel</button>
-                        <input type="submit" value="Save" className="w-40 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg active:scale-95 transition"
-                                style={{ backgroundColor: colourModes.addButtonColour, color: colourModes.cardBgColour }} />
+                        {action !== "View" ? 
+                            <button 
+                                type="button" 
+                                onClick={closeModal} 
+                                className="w-30 cursor-pointer bg-slate-100 text-black px-4 py-2 rounded-lg hover:bg-slate-200 active:scale-95 transition">
+                                    Cancel
+                            </button> 
+                        : 
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="w-full cursor-pointer bg-slate-300 text-black px-4 py-2 rounded-lg hover:bg-slate-400 active:scale-95 transition"
+                            >
+                                Close
+                            </button>}
+
+                        {action !== "View" && <input 
+                            type="submit" 
+                            value="Save" 
+                            className="w-40 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg active:scale-95 transition"
+                            style={{ backgroundColor: colourModes.addButtonColour, color: colourModes.cardBgColour }} 
+                        />}
                     </div>
                 </form>
             </div>
