@@ -29,6 +29,8 @@ function App() {
   const [todoColor, setTodoColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoColour);
   const [todoTextColor, setTodoTextColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
   const [todoPriority, setTodoPriority] = useState("low");
+  const [todoNotes, setTodoNotes] = useState("");
+
   const [openModal, setOpenModal] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
@@ -50,10 +52,10 @@ function App() {
     setOpenSettings(false);
   }
 
-  const handleUpdate = (id, newValue, newColor, newTextColor, newPriority) => {
+  const handleUpdate = (id, newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => {
     setTodos(todos.map((t) => 
       (t.id === id 
-        ? { ...t, text: newValue, color: newColor, textColor: newTextColor, priority: newPriority } 
+        ? { ...t, text: newValue, color: newColor, textColor: newTextColor, priority: newPriority, icon: newIcon, notes: newNotes } 
         : t
       )
     ));
@@ -77,13 +79,15 @@ function App() {
     localStorage.setItem("Completed-Items", JSON.stringify(completed));
   }, [completed]);
 
-  function handleInput(newValue, newColor, newTextColor, newPriority) {  
+  function handleInput(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) {  
     setTodos(t => [...t, { 
       id: crypto.randomUUID(),
       text: newValue.trim(), 
       color: newColor, 
       textColor: newTextColor, 
       priority: newPriority,
+      icon: newIcon,
+      notes: newNotes,
       dateAdded: getCurrentDate(), 
       timeStamp: Date.now() 
     }]);
@@ -225,39 +229,21 @@ function App() {
 
           <div>
             <ul className='my-2'>
-              {/* {filteredTodos.length > 0
-                ? filteredTodos.map((element) => 
+              {filteredTodos.map((element) => 
                 <ListItem 
                   key={element.id}
+                  icon={element.icon}
                   name={element.text} 
+                  notes={element.notes}
                   color={element.color}
                   textColor={element.textColor}
                   dateAdded={element.dateAdded}
                   priority={element.priority}
                   onView={() => openModalView(element.id)}
                   onComplete={() => handleComplete(element.id)}
-                  onDelete={() => handleDelete(element.id)}/>
-              )
-              : <InfoCard 
-                  textContent={filterOption ? `No ${filterOption} todos` : "No todos"} 
-                  colourModes={colourSettings}
+                  onDelete={() => handleDelete(element.id)}
                 />
-            } */}
-
-            {filteredTodos.map((element) => 
-              <ListItem 
-                key={element.id}
-                name={element.text} 
-                color={element.color}
-                textColor={element.textColor}
-                dateAdded={element.dateAdded}
-                priority={element.priority}
-                onView={() => openModalView(element.id)}
-                onComplete={() => handleComplete(element.id)}
-                onDelete={() => handleDelete(element.id)}
-              />
-              )
-            }
+              )}
             </ul>
           </div>
         </div>
@@ -305,11 +291,13 @@ function App() {
         {openModal !== null && 
           <TodoModal
             action="Edit"
+            icon={todos.find(t => t.id === openModal)?.icon}
             item={todos.find(t => t.id === openModal)?.text}
+            todoNotes={todos.find(t => t.id === openModal)?.notes}
             background={todos.find(t => t.id === openModal)?.color}
             textColor={todos.find(t => t.id === openModal)?.textColor}
             priority={todos.find(t => t.id === openModal)?.priority}
-            onSave={(newValue, newColor, newTextColor, newPriority) => handleUpdate(openModal, newValue, newColor, newTextColor, newPriority)} 
+            onSave={(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => handleUpdate(openModal, newValue, newColor, newNotes, newTextColor, newPriority, newIcon, newNotes)} 
             closeModal={closeModalView}
             colourModes={colourSettings}
           />
@@ -318,7 +306,9 @@ function App() {
         {isOpenAddModal && 
           <TodoModal 
             action="Add"
+            icon="circle"
             item=""
+            notes={todoNotes}
             background={todoColor}
             textColor={todoTextColor}
             priority={todoPriority}

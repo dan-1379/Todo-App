@@ -1,17 +1,62 @@
-import { X } from "lucide-react";
+import { X, Circle, Briefcase, GraduationCap, Code, FileText, Mail, Home, ShoppingCart, Dumbbell, Heart, Utensils, Clock, Star, Bell, Calendar, Flag } from "lucide-react";
 import { useState, useEffect } from "react";
 import { validInput } from "../regex";
 import InputError from "./InputError";
 import InputWarning from './InputWarning';
 
-const TodoModal = ({ action, item, background, textColor, priority, closeModal, onSave, colourModes }) => {
+const iconGroups = [
+    {
+        label: "General / work",
+        options: [
+            { text: "Briefcase", icon: Briefcase },
+            { text: "GraduationCap", icon: GraduationCap },
+            { text: "Code", icon: Code },
+            { text: "FileText", icon: FileText },
+            { text: "Mail", icon: Mail },
+        ]
+    },
+    {
+        label: "Personal",
+        options: [
+            { text: "Home", icon: Home },
+            { text: "ShoppingCart", icon: ShoppingCart },
+            { text: "Dumbbell", icon: Dumbbell },
+            { text: "Heart", icon: Heart },
+            { text: "Utensils", icon: Utensils },
+        ]
+    },
+    {
+        label: "Time-sensitive / misc",
+        options: [
+            { text: "Clock", icon: Clock },
+            { text: "Star", icon: Star },
+            { text: "Bell", icon: Bell },
+            { text: "Calendar", icon: Calendar },
+            { text: "Flag", icon: Flag },
+        ]
+    }
+];
+
+const fallbackIcon = { text: "Circle", icon: Circle };
+
+export const iconMap = [...iconGroups.flatMap(g => g.options), fallbackIcon]
+    .reduce((acc, { text, icon }) => {
+        acc[text] = icon;
+        return acc;
+    }, {});
+
+const TodoModal = ({ action, icon="circle", item, notes, background, textColor, priority, closeModal, onSave, colourModes }) => {
+    const [todoIcon, setTodoIcon] = useState(icon);
     const [todo, setTodo] = useState(item);
+    const [todoNotes, setTodoNotes] = useState(notes);
     const [todoColor, setTodoColor] = useState(background);
     const [todoTextColor, setTodoTextColor] = useState(textColor);
     const [todoPriority, setTodoPriority] = useState(priority);
 
     const [inputError, setInputError] = useState(false);
     const [inputWarning, setInputWarning] = useState(false);
+
+    const IconComponent = iconMap[todoIcon] || fallbackIcon.icon;
 
     const handleSubmit = (e) => {
         e?.preventDefault();
@@ -28,7 +73,7 @@ const TodoModal = ({ action, item, background, textColor, priority, closeModal, 
             return;
         }
 
-        onSave(todo, todoColor, todoTextColor, todoPriority);
+        onSave(todo, todoNotes, todoColor, todoTextColor, todoPriority, todoIcon);
     }
 
     useEffect(() => {
@@ -53,19 +98,19 @@ const TodoModal = ({ action, item, background, textColor, priority, closeModal, 
         };
     }, []);
 
-    useEffect(() => {
-        const handleEnterKeyPress = (event) => {
-            if (event.key === 'Enter') {
-                handleSubmit();
-            }
-        }
+    // useEffect(() => {
+    //     const handleEnterKeyPress = (event) => {
+    //         if (event.key === 'Enter') {
+    //             handleSubmit();
+    //         }
+    //     }
 
-        window.addEventListener('keydown', handleEnterKeyPress);
+    //     window.addEventListener('keydown', handleEnterKeyPress);
 
-        return () => {
-            window.removeEventListener('keydown', handleEnterKeyPress);
-        };
-    }, [todo, todoColor, todoTextColor]);
+    //     return () => {
+    //         window.removeEventListener('keydown', handleEnterKeyPress);
+    //     };
+    // }, [todo, todoColor, todoTextColor]);
 
     return (
         <>
@@ -79,7 +124,38 @@ const TodoModal = ({ action, item, background, textColor, priority, closeModal, 
 
                 <hr className="mb-5 text-slate-300 w-full h-[1px]" />
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5 overflow-y-scroll">
+                    <div className="flex flex-row gap-2">
+                        <div className="flex-3 flex flex-col">
+                            <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
+                            
+                            <select
+                                name="todoIcon" 
+                                id="todoIcon" 
+                                value={todoIcon}
+                                onChange={(e) => setTodoIcon(e.target.value)}
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400"
+                            >
+                                    <option selected value={fallbackIcon.text}>{fallbackIcon.text}</option>
+
+                                    {iconGroups.map((group) => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map((opt) => (
+                                                <option key={opt.text} value={opt.text}>{opt.text}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
+                            </select>
+                        </div>
+
+                        <div className="flex-1 flex flex-col">
+                            <span className="text-sm text-slate-600 whitespace-nowrap">Preview</span>
+                            <div className="w-full h-full flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2">
+                                <IconComponent size={20} />
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div>
                         <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
                         <input 
@@ -91,6 +167,20 @@ const TodoModal = ({ action, item, background, textColor, priority, closeModal, 
                             placeholder="Enter todo" 
                             className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
                         />
+                    </div>
+
+                    <div>
+                        <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
+                        <textarea 
+                            name="todoNotes" 
+                            id="todoNotes" 
+                            cols="10" 
+                            rows="3"
+                            value={todoNotes}
+                            onChange={(e) => setTodoNotes(e.target.value)}
+                            className="w-full resize-none sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
+                        >
+                        </textarea>
                     </div>
 
                     <div>
