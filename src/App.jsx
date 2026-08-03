@@ -30,6 +30,8 @@ function App() {
   const [todoTextColor, setTodoTextColor] = useState(DEFAULT_COLOUR_SETTINGS.automaticTodoFontColor);
   const [todoPriority, setTodoPriority] = useState("low");
   const [todoNotes, setTodoNotes] = useState("");
+  const [todoIconBgColor, setTodoIconBgColor] = useState(DEFAULT_COLOUR_SETTINGS.todoIconBgColor);
+  const [todoIconColor, setTodoIconColor] = useState(DEFAULT_COLOUR_SETTINGS.todoIconColor);
 
   const [openModal, setOpenModal] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
@@ -52,10 +54,19 @@ function App() {
     setOpenSettings(false);
   }
 
-  const handleUpdate = (id, newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => {
+  const handleUpdate = (id, newValue, newNotes, newColor, newTextColor, newPriority, newIcon, newIconBg, newIconColor) => {
     setTodos(todos.map((t) => 
       (t.id === id 
-        ? { ...t, text: newValue, color: newColor, textColor: newTextColor, priority: newPriority, icon: newIcon, notes: newNotes } 
+        ? { ...t, 
+            text: newValue, 
+            color: newColor, 
+            textColor: newTextColor, 
+            priority: newPriority, 
+            icon: newIcon, 
+            notes: newNotes,
+            iconBg: newIconBg,
+            iconColor: newIconColor 
+          } 
         : t
       )
     ));
@@ -79,7 +90,7 @@ function App() {
     localStorage.setItem("Completed-Items", JSON.stringify(completed));
   }, [completed]);
 
-  function handleInput(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) {  
+  function handleInput(newValue, newNotes, newColor, newTextColor, newPriority, newIcon, newIconBg, newIconColor) {  
     setTodos(t => [...t, { 
       id: crypto.randomUUID(),
       text: newValue.trim(), 
@@ -88,6 +99,8 @@ function App() {
       priority: newPriority,
       icon: newIcon,
       notes: newNotes,
+      iconBg: newIconBg,
+      iconColor: newIconColor,
       dateAdded: getCurrentDate(), 
       timeStamp: Date.now() 
     }]);
@@ -98,7 +111,15 @@ function App() {
   const getCurrentDate = () => {
     const date = new Date();
     
-    const options = { timeZone: 'Europe/Dublin', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const options = { 
+      timeZone: 'Europe/Dublin', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+
     const formattedDate = new Intl.DateTimeFormat('ire', options).format(date);
     return formattedDate;
   }
@@ -248,6 +269,8 @@ function App() {
                   textColor={element.textColor}
                   dateAdded={element.dateAdded}
                   priority={element.priority}
+                  iconBg={element.iconBg}
+                  iconColor={element.iconColor}
                   onView={() => openModalView(element.id)}
                   onViewDetails={() => openViewModal(element.id)}
                   onComplete={() => handleComplete(element.id)}
@@ -315,7 +338,9 @@ function App() {
             background={todos.find(t => t.id === openModal)?.color}
             textColor={todos.find(t => t.id === openModal)?.textColor}
             priority={todos.find(t => t.id === openModal)?.priority}
-            onSave={(newValue, newNotes, newColor, newTextColor, newPriority, newIcon) => handleUpdate(openModal, newValue, newNotes, newColor, newTextColor, newPriority, newIcon)} 
+            iconBgColor={todos.find(t => t.id === openModal)?.iconBg}
+            iconColor={todos.find(t => t.id === openModal)?.iconColor}
+            onSave={(newValue, newNotes, newColor, newTextColor, newPriority, newIcon, newIconBg, newIconColor) => handleUpdate(openModal, newValue, newNotes, newColor, newTextColor, newPriority, newIcon, newIconBg, newIconColor)} 
             closeModal={closeModalView}
             colourModes={colourSettings}
           />
@@ -330,6 +355,8 @@ function App() {
             background={todoColor}
             textColor={todoTextColor}
             priority={todoPriority}
+            iconBgColor={todoIconBgColor}
+            iconColor={todoIconColor}
             onSave={handleInput} 
             closeModal={closeAddModal}
             colourModes={colourSettings}
@@ -345,6 +372,8 @@ function App() {
             background={todos.find(t => t.id === isOpenViewModal)?.color}
             textColor={todos.find(t => t.id === isOpenViewModal)?.textColor}
             priority={todos.find(t => t.id === isOpenViewModal)?.priority}
+            iconBgColor={todos.find(t => t.id === isOpenViewModal)?.iconBg}
+            iconColor={todos.find(t => t.id === isOpenViewModal)?.iconColor}
             onSave={() => {}} 
             closeModal={() => closeViewModal()}
             colourModes={colourSettings}

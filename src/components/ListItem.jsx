@@ -19,10 +19,38 @@ function ListItem(props) {
         setItemOptionsOpen(!itemOptionsOpen);
     }
 
+    const handleOnEdit = () => {
+        setItemOptionsOpen(false);
+        props.onView();
+    }
+
+    const handleOnView = () => {
+        setItemOptionsOpen(false);
+        props.onViewDetails();
+    }
+
+    const handleOnComplete = () => {
+        setItemOptionsOpen(false);
+        props.onComplete();
+    }
+
+    const handleOnDelete = () => {
+        setItemOptionsOpen(false);
+        props.onDelete();
+    }
+
+    const showPreviewText = (text, wordsPreview = 4) => {
+        const splitText = text.split(" ");
+        const previewText = splitText.slice(0, wordsPreview).join(" ");
+
+        return splitText.length > wordsPreview ? previewText + "..." : text;
+    }
+
     return (
         <li style={{ backgroundColor: props.color, color: props.textColor }} className="flex items-center justify-between rounded-lg px-4 py-3 my-5 relative">
             <div className='flex gap-2 justify-center items-center'>
-                <div className="shrink-0 bg-white text-black p-2 rounded-md">
+                <div className="shrink-0 p-2 rounded-md"
+                    style={{ backgroundColor: props.iconBg, color:props.iconColor }}>
                     <IconComponent size={20}/>
                 </div>
                 <div className='flex gap-1'>
@@ -37,24 +65,28 @@ function ListItem(props) {
                     </div>
 
                     <div>
-                        <p className='font-semibold text-md flex gap-2'>{props.name}</p> 
+                        <p className='font-semibold text-md w-[90%] h-6 overflow-hidden whitespace-nowrap text-ellipsis' title={props.name}>{showPreviewText(props.name)}</p> 
                         <p className='font-light text-xs'>{props.dateAdded}</p>
                     </div>
                 </div>
             </div>
 
             <div className='flex gap-2'>
-                <button className='cursor-pointer' onClick={() => handleItemOptionsModal()}><Ellipsis /></button>
+                {props.action != "Add" ?
+                    <button type='button' className='cursor-pointer' onClick={() => handleItemOptionsModal()}><Ellipsis /></button>
+                    :
+                    <button type='button' className='cursor-pointer'><Ellipsis /></button>
+                } 
             </div>
 
             {itemOptionsOpen && 
                 <div className='absolute bg-white border top-10 right-0 border-slate-200 rounded-xl shadow-lg w-56 mt-2 p-4 z-10'>
                     <ItemOptionsModal 
                         onClose={() => handleItemOptionsModal()}
-                        onEdit={props.onView}
-                        onView={props.onViewDetails}
-                        onComplete={props.onComplete}
-                        onDelete={props.onDelete}
+                        onEdit={handleOnEdit}
+                        onView={handleOnView}
+                        onComplete={handleOnComplete}
+                        onDelete={handleOnDelete}
                     />
                 </div>
             }

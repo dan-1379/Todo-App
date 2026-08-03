@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { validInput } from "../regex";
 import InputError from "./InputError";
 import InputWarning from './InputWarning';
+import ListItem from "./ListItem";
 
 const iconGroups = [
     {
@@ -45,18 +46,30 @@ export const iconMap = [...iconGroups.flatMap(g => g.options), fallbackIcon]
         return acc;
     }, {});
 
-const TodoModal = ({ action, icon="circle", item, notes, background, textColor, priority, closeModal, onSave, colourModes }) => {
+const TodoModal = ({ action, icon="circle", item, notes, background, textColor, priority, iconBgColor, iconColor, closeModal, onSave, colourModes }) => {
     const [todoIcon, setTodoIcon] = useState(icon);
     const [todo, setTodo] = useState(item);
     const [todoNotes, setTodoNotes] = useState(notes);
     const [todoColor, setTodoColor] = useState(background);
     const [todoTextColor, setTodoTextColor] = useState(textColor);
     const [todoPriority, setTodoPriority] = useState(priority);
+    const [todoIconBgColor, setTodoIconBgColor] = useState(iconBgColor);
+    const [todoIconColor, setTodoIconColor] = useState(iconColor);
 
     const [inputError, setInputError] = useState(false);
     const [inputWarning, setInputWarning] = useState(false);
 
     const IconComponent = iconMap[todoIcon] || fallbackIcon.icon;
+
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleModalClose = () => {
+        setIsClosing(true);
+        
+        setTimeout(() => {
+            closeModal();
+        }, 200);
+    }
 
     const handleSubmit = (e) => {
         e?.preventDefault();
@@ -73,13 +86,13 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
             return;
         }
 
-        onSave(todo, todoNotes, todoColor, todoTextColor, todoPriority, todoIcon);
+        onSave(todo, todoNotes, todoColor, todoTextColor, todoPriority, todoIcon, todoIconBgColor, todoIconColor);
     }
 
     useEffect(() => {
         const handleEsc = (event) => {
             if (event.key === 'Escape') {
-                closeModal();
+                handleModalClose();
             }
         };
         
@@ -98,45 +111,32 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
         };
     }, []);
 
-    // useEffect(() => {
-    //     const handleEnterKeyPress = (event) => {
-    //         if (event.key === 'Enter') {
-    //             handleSubmit();
-    //         }
-    //     }
-
-    //     window.addEventListener('keydown', handleEnterKeyPress);
-
-    //     return () => {
-    //         window.removeEventListener('keydown', handleEnterKeyPress);
-    //     };
-    // }, [todo, todoColor, todoTextColor]);
-
     return (
         <>
-            <div className="bg-black/70 fixed inset-0 z-10 opacity-900" onClick={closeModal}></div>
+            <div className={`bg-black/70 fixed inset-0 z-10 opacity-900 ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`} onClick={handleModalClose}></div>
 
-            <div className="bg-white fixed inset-[2em] flex flex-col z-20 self-center m-[2em] rounded-xl md:w-90 lg:w-[40%] p-10 ml-auto mr-auto">
+            <div className={`bg-white fixed h-[80dvh] inset-10 flex flex-col z-20 self-center m-[2em] rounded-xl md:w-90 lg:w-[40%] p-10 ml-auto mr-auto ${isClosing ? 'animate-[fade-out-scale_0.2s_ease-out]' : 'animate-[fade-in-scale_0.2s_ease-out]'}`}>
                 <div className="flex flex-row justify-between items-center">
                     <h2 className="text-xl md:text-2xl font-bold text-slate-600">{action} Todo Item</h2>
-                    <button className="cursor-pointer absolute top-1 right-0 size-10 hover:text-white text-slate-500 rounded-full hover:bg-red-600 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={closeModal}><X size={20}/></button>
+                    <button className="cursor-pointer absolute top-1 right-0 size-10 hover:text-white text-slate-500 rounded-full hover:bg-red-600 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={handleModalClose}><X size={20}/></button>
                 </div> 
 
                 <hr className="mb-5 text-slate-300 w-full h-[1px]" />
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5 overflow-y-scroll">
-                    <div className="flex flex-row gap-2">
-                        <div className="flex-3 flex flex-col">
-                            <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
-                            
-                            <select
-                                disabled={action === "View"}
-                                name="todoIcon" 
-                                id="todoIcon" 
-                                value={todoIcon}
-                                onChange={(e) => setTodoIcon(e.target.value)}
-                                className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400"
-                            >
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 min-h-0">
+                    <div className="flex flex-col gap-5 flex-1 min-h-0 overflow-y-auto pr-1">
+                        <div className="flex flex-row gap-2">
+                            <div className="flex-3 flex flex-col">
+                                <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
+                                
+                                <select
+                                    disabled={action === "View"}
+                                    name="todoIcon" 
+                                    id="todoIcon" 
+                                    value={todoIcon}
+                                    onChange={(e) => setTodoIcon(e.target.value)}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400"
+                                >
                                     <option selected value={fallbackIcon.text}>{fallbackIcon.text}</option>
 
                                     {iconGroups.map((group) => (
@@ -146,103 +146,158 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                                             ))}
                                         </optgroup>
                                     ))}
+                                </select>
+                            </div>
+
+                            <div className="flex-1 flex flex-col">
+                                <span className="text-sm text-slate-600 whitespace-nowrap">Preview</span>
+                                <div className="w-full h-full flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2">
+                                    <IconComponent size={20} />
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
+                            <input
+                                disabled={action === "View"}
+                                type="text" 
+                                id="todoItem" 
+                                value={todo} 
+                                onChange={(e) => setTodo(e.target.value)} 
+                                placeholder="Enter todo" 
+                                className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
+                            <textarea
+                                disabled={action === "View"}
+                                name="todoNotes" 
+                                id="todoNotes" 
+                                cols="10" 
+                                rows="3"
+                                value={todoNotes}
+                                onChange={(e) => setTodoNotes(e.target.value)}
+                                className="w-full resize-none sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
+                            >
+                            </textarea>
+                        </div>
+
+                        <div>
+                            <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
+                    
+                            <select
+                                disabled={action === "View"}
+                                name="todoPriority" 
+                                id="todoPriority" 
+                                value={todoPriority}
+                                onChange={(e) => setTodoPriority(e.target.value)}
+                                className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
                             </select>
                         </div>
 
-                        <div className="flex-1 flex flex-col">
-                            <span className="text-sm text-slate-600 whitespace-nowrap">Preview</span>
-                            <div className="w-full h-full flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2">
-                                <IconComponent size={20} />
+                        <div>
+                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Item Color Options</label>
+                            <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
+                                <div className='flex items-center gap-2'>
+                                    <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
+                                    <input
+                                        disabled={action === "View"} 
+                                        id="bg-color"
+                                        type="color" 
+                                        value={todoColor}
+                                        onChange={(e) => setTodoColor(e.target.value)}
+                                        className='size-8 rounded border border-slate-300 cursor-pointer'
+                                    />
+                                </div>
+
+                                <div className='flex items-center gap-2'>
+                                    <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Text</label>
+                                    <input
+                                        disabled={action === "View"}
+                                        id="text-color"
+                                        type="color" 
+                                        value={todoTextColor}
+                                        onChange={(e) => setTodoTextColor(e.target.value)}
+                                        className='size-8 rounded border border-slate-300 cursor-pointer'
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
-                        <input
-                            disabled={action === "View"}
-                            autoFocus
-                            type="text" 
-                            id="todoItem" 
-                            value={todo} 
-                            onChange={(e) => setTodo(e.target.value)} 
-                            placeholder="Enter todo" 
-                            className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
-                        />
-                    </div>
 
-                    <div>
-                        <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
-                        <textarea
-                            disabled={action === "View"}
-                            name="todoNotes" 
-                            id="todoNotes" 
-                            cols="10" 
-                            rows="3"
-                            value={todoNotes}
-                            onChange={(e) => setTodoNotes(e.target.value)}
-                            className="w-full resize-none sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
-                        >
-                        </textarea>
-                    </div>
+                        {/** */}
+                        <div>
+                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Icon Color Options</label>
+                            <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
+                                <div className='flex items-center gap-2'>
+                                    <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Icon Background</label>
+                                    <input
+                                        disabled={action === "View"} 
+                                        id="bg-color"
+                                        type="color" 
+                                        value={todoIconBgColor}
+                                        onChange={(e) => setTodoIconBgColor(e.target.value)}
+                                        className='size-8 rounded border border-slate-300 cursor-pointer'
+                                    />
+                                </div>
 
-                    <div>
-                        <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
-                
-                        <select
-                            disabled={action === "View"}
-                            name="todoPriority" 
-                            id="todoPriority" 
-                            value={todoPriority}
-                            onChange={(e) => setTodoPriority(e.target.value)}
-                            className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Color Options</label>
-                        <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
-                            <div className='flex items-center gap-2'>
-                                <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
-                                <input
-                                    disabled={action === "View"} 
-                                    id="bg-color"
-                                    type="color" 
-                                    value={todoColor}
-                                    onChange={(e) => setTodoColor(e.target.value)}
-                                    className='size-8 rounded border border-slate-300 cursor-pointer'
-                                />
-                            </div>
-
-                            <div className='flex items-center gap-2'>
-                                <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Text</label>
-                                <input
-                                    disabled={action === "View"}
-                                    id="text-color"
-                                    type="color" 
-                                    value={todoTextColor}
-                                    onChange={(e) => setTodoTextColor(e.target.value)}
-                                    className='size-8 rounded border border-slate-300 cursor-pointer'
-                                />
+                                <div className='flex items-center gap-2'>
+                                    <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Icon</label>
+                                    <input
+                                        disabled={action === "View"}
+                                        id="text-color"
+                                        type="color" 
+                                        value={todoIconColor}
+                                        onChange={(e) => setTodoIconColor(e.target.value)}
+                                        className='size-8 rounded border border-slate-300 cursor-pointer'
+                                    />
+                                </div>
                             </div>
                         </div>
+                        {/** */}
+
+                        {(action == "Add" || action == "Edit") && 
+                            <div>
+                                <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Todo item preview</label>
+
+                                <ListItem
+                                    action={action}
+                                    type="preview"
+                                    icon={todoIcon}
+                                    name={todo} 
+                                    notes={todoNotes}
+                                    color={todoColor}
+                                    textColor={todoTextColor}
+                                    dateAdded={new Date().toLocaleDateString()}
+                                    priority={todoPriority}
+                                    iconBg={todoIconBgColor}
+                                    iconColor={todoIconColor}
+                                    onView={() => {}}
+                                    onViewDetails={() => {}}
+                                    onComplete={() => {}}
+                                    onDelete={() => {}}
+                                />
+                            </div>
+                        }
                     </div>
 
                     <div className="flex justify-center sm:justify-end gap-2 w-full">
                         {action !== "View" ? 
                             <button 
                                 type="button" 
-                                onClick={closeModal} 
+                                onClick={handleModalClose} 
                                 className="w-30 cursor-pointer bg-slate-100 text-black px-4 py-2 rounded-lg hover:bg-slate-200 active:scale-95 transition">
                                     Cancel
                             </button> 
                         : 
                             <button
                                 type="button"
-                                onClick={closeModal}
+                                onClick={handleModalClose}
                                 className="w-full cursor-pointer bg-slate-300 text-black px-4 py-2 rounded-lg hover:bg-slate-400 active:scale-95 transition"
                             >
                                 Close

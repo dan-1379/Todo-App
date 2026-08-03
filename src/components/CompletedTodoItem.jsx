@@ -14,22 +14,31 @@ const CompletedTodoItem = ({ item, timeStarted, timeCompleted, timeStampStarted,
         return "<1m";
     }
 
-     const timeTaken = formatDuration(timeStampCompleted - timeStampStarted);
+    const showPreviewText = (text, wordsPreview = 4) => {
+        const splitText = text.split(" ");
+        const previewText = splitText.slice(0, wordsPreview).join(" ");
+
+        return splitText.length > wordsPreview ? previewText + "..." : previewText;
+    }
+
+    const timeTaken = formatDuration(timeStampCompleted - timeStampStarted);
 
     return (
         <li className='rounded-lg px-4 py-3 my-5 flex justify-between border-l-5 border-slate-300'
             style={{backgroundColor: colourModes.completedTodoColour, color: colourModes.completedTodoFontHeadingColor }}
         >
             <div className='flex gap-2 justify-center items-center'>
-                <CircleCheck size={20} className="text-slate-400" style={{ color: colourModes.completedTodoFontHeadingColor }}/>
+                <div className="shrink-0 p-2 rounded-md">
+                    <CircleCheck size={20} className="text-slate-400" style={{ color: colourModes.completedTodoFontHeadingColor }}/>
+                </div>
 
                 <div className='flex flex-col'>
-                    <p className='font-semibold text-md' style={{ color: colourModes.completedTodoFontHeadingColor }}>{item}</p> 
+                    <p className='font-semibold text-md w-[95%] h-6 overflow-hidden' style={{ color: colourModes.completedTodoFontHeadingColor }}>{showPreviewText(item)}</p> 
                     <p className='flex items-center text-sm text-slate-500' style={{ color: colourModes.completedTodoFontTextColor }}>{timeStarted} - {timeCompleted}</p>
                 </div>
             </div>
 
-            <div>
+            <div className="flex justify-center items-center">
                 <p>{timeTaken}</p>
             </div>
         </li>
