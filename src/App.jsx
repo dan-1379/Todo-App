@@ -72,6 +72,7 @@ function App() {
     ));
     
     closeModalView();
+    setSuccessMessage("Todo updated successfully!");
   }
 
   const [completed, setCompleted] = useState(() => {
@@ -106,6 +107,7 @@ function App() {
     }]);
 
     closeAddModal();
+    setSuccessMessage("New todo added successfully!");
   }
 
   const getCurrentDate = () => {
@@ -183,7 +185,9 @@ function App() {
     localStorage.setItem('Color-Settings', JSON.stringify(colourSettings));
   }, [colourSettings]);
 
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  const [isOpenAddModal, setIsOpenAddModal] = useState(() => {
+    return localStorage.getItem("isOpenAddModal") === "true";
+  });
   const [isOpenViewModal, setIsOpenViewModal] = useState(null);
 
   const openAddModal = () => {
@@ -216,6 +220,10 @@ function App() {
   const filteredTodos = filterOption
     ? todos.filter(todo => todo.priority === filterOption)
     : todos;
+
+  useEffect(() => {
+    localStorage.setItem("isOpenAddModal", isOpenAddModal);
+  }, [isOpenAddModal]);
 
   return (
     <div>

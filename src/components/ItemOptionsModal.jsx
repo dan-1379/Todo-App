@@ -26,10 +26,10 @@ const ItemOptionsModal = ({ onClose, onView, onEdit, onComplete, onDelete }) => 
             <hr className="mb-5 text-slate-300 w-full h-[1px]" />
 
             <div className='flex flex-col gap-0.5 text-black'>
-                <button onClick={onView} title="View Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-slate-400 hover:text-white rounded-md duration-300 ease-in-out"><Eye size={18} />View</button>
-                <button onClick={onEdit}  title="Edit Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-blue-500 hover:text-white rounded-md duration-300 ease-in-out"><SquarePen size={18} />Edit</button>
-                <button onClick={onComplete} title="Complete Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-green-500 hover:text-white rounded-md duration-300 ease-in-out"><Check size={18} />Complete</button>
-                <button onClick={onDelete} title="Delete Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:scale-105 bg-red-500 text-white rounded-md duration-300 ease-in-out"><Trash size={18} />Delete</button>
+                <button onClick={onView} title="View Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-slate-200 rounded-md duration-300 ease-in-out"><Eye size={18} />View</button>
+                <button onClick={onEdit}  title="Edit Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-slate-200 rounded-md duration-300 ease-in-out"><SquarePen size={18} />Edit</button>
+                <button onClick={onComplete} title="Complete Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-slate-200 rounded-md duration-300 ease-in-out"><Check size={18} />Complete</button>
+                <button onClick={onDelete} title="Delete Todo" className="w-full items-center flex gap-10 p-3 cursor-pointer hover:bg-red-600 bg-red-500 text-white rounded-md duration-300 ease-in-out"><Trash size={18} />Delete</button>
             </div>
         </>
     )
