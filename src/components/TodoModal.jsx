@@ -113,7 +113,7 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
 
     return (
         <>
-            <div className={`bg-black/70 fixed inset-0 z-10 opacity-900 ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`} onClick={handleModalClose}></div>
+            <div className={`bg-black/70 fixed inset-0 z-10 ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`} onClick={handleModalClose}></div>
 
             <div className={`bg-white fixed h-[80dvh] inset-10 flex flex-col z-20 self-center m-[2em] rounded-xl md:w-90 lg:w-[40%] p-10 ml-auto mr-auto ${isClosing ? 'animate-[fade-out-scale_0.2s_ease-out]' : 'animate-[fade-in-scale_0.2s_ease-out]'}`}>
                 <div className="flex flex-row justify-between items-center">
