@@ -1,4 +1,4 @@
-import { CircleCheck, Circle, Ellipsis } from 'lucide-react';
+import { CircleCheck, Circle, Ellipsis, NotebookPen } from 'lucide-react';
 import { iconMap } from './TodoModal';
 import ItemOptionsModal from './ItemOptionsModal';
 import { useState } from 'react';
@@ -65,8 +65,15 @@ function ListItem(props) {
                     </div>
 
                     <div>
-                        <p className='font-semibold text-md w-[90%] h-6 overflow-hidden whitespace-nowrap text-ellipsis' title={props.name}>{showPreviewText(props.name)}</p> 
-                        <p className='font-light text-xs'>{props.dateAdded}</p>
+                        <p className='font-semibold text-md w-[90%] h-6 overflow-hidden whitespace-nowrap text-ellipsis' title={props.name}>{props.name ? showPreviewText(props.name) : "Todo"}</p> 
+                        
+                        <div className='flex gap-2 items-center'>
+                            <p className='font-light text-xs flex gap-2'>{props.dateAdded}</p>
+                            
+                            {props.notes && 
+                                <p className='flex gap-2 items-center'><span className='text-slate-400'>●</span> <NotebookPen size={12}/></p>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

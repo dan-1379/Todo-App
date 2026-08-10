@@ -225,6 +225,7 @@ function App() {
     localStorage.setItem("isOpenAddModal", isOpenAddModal);
   }, [isOpenAddModal]);
 
+
   return (
     <div>
       <Header 

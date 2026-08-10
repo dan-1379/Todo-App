@@ -124,166 +124,168 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                 <hr className="mb-5 text-slate-300 w-full h-[1px]" />
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 min-h-0">
-                    <div className="flex flex-col gap-5 flex-1 min-h-0 overflow-y-auto pr-1">
-                        <div className="flex flex-row gap-2">
-                            <div className="flex-3 flex flex-col">
-                                <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
-                                
+                    <div className="relative flex-1 min-h-0">
+                        <div className="flex flex-col gap-5 flex-1 h-full overflow-y-auto pr-1">
+                            <div className="flex flex-row gap-2">
+                                <div className="flex-3 flex flex-col">
+                                    <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
+                                    
+                                    <select
+                                        disabled={action === "View"}
+                                        name="todoIcon" 
+                                        id="todoIcon" 
+                                        value={todoIcon}
+                                        onChange={(e) => setTodoIcon(e.target.value)}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-900 focus:ring-offset-0"
+                                    >
+                                        <option selected value={fallbackIcon.text}>{fallbackIcon.text}</option>
+
+                                        {iconGroups.map((group) => (
+                                            <optgroup key={group.label} label={group.label}>
+                                                {group.options.map((opt) => (
+                                                    <option key={opt.text} value={opt.text}>{opt.text}</option>
+                                                ))}
+                                            </optgroup>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex-1 flex flex-col">
+                                    <span className="text-sm text-slate-600 whitespace-nowrap">Preview</span>
+                                    <div className="w-full h-full flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2">
+                                        <IconComponent size={20} />
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div>
+                                <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
+                                <input
+                                    disabled={action === "View"}
+                                    type="text" 
+                                    id="todoItem" 
+                                    value={todo} 
+                                    onChange={(e) => setTodo(e.target.value)} 
+                                    placeholder="Enter todo" 
+                                    className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 sm:w-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-0 border-l-5"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
+                                <textarea
+                                    disabled={action === "View"}
+                                    name="todoNotes" 
+                                    id="todoNotes" 
+                                    cols="10" 
+                                    rows="3"
+                                    value={todoNotes}
+                                    onChange={(e) => setTodoNotes(e.target.value)}
+                                    className="w-full resize-none sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
+                                >
+                                </textarea>
+                            </div>
+
+                            <div>
+                                <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
+                        
                                 <select
                                     disabled={action === "View"}
-                                    name="todoIcon" 
-                                    id="todoIcon" 
-                                    value={todoIcon}
-                                    onChange={(e) => setTodoIcon(e.target.value)}
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400"
-                                >
-                                    <option selected value={fallbackIcon.text}>{fallbackIcon.text}</option>
-
-                                    {iconGroups.map((group) => (
-                                        <optgroup key={group.label} label={group.label}>
-                                            {group.options.map((opt) => (
-                                                <option key={opt.text} value={opt.text}>{opt.text}</option>
-                                            ))}
-                                        </optgroup>
-                                    ))}
+                                    name="todoPriority" 
+                                    id="todoPriority" 
+                                    value={todoPriority}
+                                    onChange={(e) => setTodoPriority(e.target.value)}
+                                    className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
                                 </select>
                             </div>
 
-                            <div className="flex-1 flex flex-col">
-                                <span className="text-sm text-slate-600 whitespace-nowrap">Preview</span>
-                                <div className="w-full h-full flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2">
-                                    <IconComponent size={20} />
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div>
-                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Todo</label>
-                            <input
-                                disabled={action === "View"}
-                                type="text" 
-                                id="todoItem" 
-                                value={todo} 
-                                onChange={(e) => setTodo(e.target.value)} 
-                                placeholder="Enter todo" 
-                                className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="todoNotes" className="text-sm text-slate-600 whitespace-nowrap">Notes</label>
-                            <textarea
-                                disabled={action === "View"}
-                                name="todoNotes" 
-                                id="todoNotes" 
-                                cols="10" 
-                                rows="3"
-                                value={todoNotes}
-                                onChange={(e) => setTodoNotes(e.target.value)}
-                                className="w-full resize-none sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
-                            >
-                            </textarea>
-                        </div>
-
-                        <div>
-                            <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
-                    
-                            <select
-                                disabled={action === "View"}
-                                name="todoPriority" 
-                                id="todoPriority" 
-                                value={todoPriority}
-                                onChange={(e) => setTodoPriority(e.target.value)}
-                                className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Item Color Options</label>
-                            <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
-                                <div className='flex items-center gap-2'>
-                                    <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
-                                    <input
-                                        disabled={action === "View"} 
-                                        id="bg-color"
-                                        type="color" 
-                                        value={todoColor}
-                                        onChange={(e) => setTodoColor(e.target.value)}
-                                        className='size-8 rounded border border-slate-300 cursor-pointer'
-                                    />
-                                </div>
-
-                                <div className='flex items-center gap-2'>
-                                    <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Text</label>
-                                    <input
-                                        disabled={action === "View"}
-                                        id="text-color"
-                                        type="color" 
-                                        value={todoTextColor}
-                                        onChange={(e) => setTodoTextColor(e.target.value)}
-                                        className='size-8 rounded border border-slate-300 cursor-pointer'
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/** */}
-                        <div>
-                            <label htmlFor="todoItem" className="text-sm text-slate-600 whitespace-nowrap">Icon Color Options</label>
-                            <div className='flex flex-row sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2'>
-                                <div className='flex items-center gap-2'>
-                                    <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Icon Background</label>
-                                    <input
-                                        disabled={action === "View"} 
-                                        id="bg-color"
-                                        type="color" 
-                                        value={todoIconBgColor}
-                                        onChange={(e) => setTodoIconBgColor(e.target.value)}
-                                        className='size-8 rounded border border-slate-300 cursor-pointer'
-                                    />
-                                </div>
-
-                                <div className='flex items-center gap-2'>
-                                    <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Icon</label>
-                                    <input
-                                        disabled={action === "View"}
-                                        id="text-color"
-                                        type="color" 
-                                        value={todoIconColor}
-                                        onChange={(e) => setTodoIconColor(e.target.value)}
-                                        className='size-8 rounded border border-slate-300 cursor-pointer'
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        {/** */}
-
-                        {(action == "Add" || action == "Edit") && 
                             <div>
-                                <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Todo item preview</label>
+                                <label htmlFor="todoItem" className="text-sm text-black whitespace-nowrap">Item Color Options</label>
+                                <div className='flex flex-col sm:flex-row gap-5 bg-white border border-slate-200 rounded-lg px-3 py-2'>
+                                    <div className='flex flex-row justify-between items-center gap-2'>
+                                        <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
+                                        <input
+                                            disabled={action === "View"} 
+                                            id="bg-color"
+                                            type="color" 
+                                            value={todoColor}
+                                            onChange={(e) => setTodoColor(e.target.value)}
+                                            className='size-8 rounded border border-slate-300 cursor-pointer'
+                                        />
+                                    </div>
 
-                                <ListItem
-                                    action={action}
-                                    type="preview"
-                                    icon={todoIcon}
-                                    name={todo} 
-                                    notes={todoNotes}
-                                    color={todoColor}
-                                    textColor={todoTextColor}
-                                    dateAdded={new Date().toLocaleDateString()}
-                                    priority={todoPriority}
-                                    iconBg={todoIconBgColor}
-                                    iconColor={todoIconColor}
-                                    onView={() => {}}
-                                    onViewDetails={() => {}}
-                                    onComplete={() => {}}
-                                    onDelete={() => {}}
-                                />
+                                    <div className='flex flex-row justify-between items-center gap-2'>
+                                        <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Text</label>
+                                        <input
+                                            disabled={action === "View"}
+                                            id="text-color"
+                                            type="color" 
+                                            value={todoTextColor}
+                                            onChange={(e) => setTodoTextColor(e.target.value)}
+                                            className='size-8 rounded border border-slate-300 cursor-pointer'
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                        }
+
+                            <div>
+                                <label htmlFor="todoItem" className="text-sm text-black whitespace-nowrap">Icon Color Options</label>
+                                <div className='flex flex-col sm:flex-row gap-5 bg-white border border-slate-200 rounded-lg px-3 py-2'>
+                                    <div className='flex flex-row justify-between items-center gap-2'>
+                                        <label htmlFor="bg-color" className='text-sm text-slate-500 whitespace-nowrap'>Background</label>
+                                        <input
+                                            disabled={action === "View"} 
+                                            id="bg-color"
+                                            type="color" 
+                                            value={todoIconBgColor}
+                                            onChange={(e) => setTodoIconBgColor(e.target.value)}
+                                            className='size-8 rounded border border-slate-300 cursor-pointer'
+                                        />
+                                    </div>
+
+                                    <div className='flex flex-row justify-between items-center gap-2'>
+                                        <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Icon</label>
+                                        <input
+                                            disabled={action === "View"}
+                                            id="text-color"
+                                            type="color" 
+                                            value={todoIconColor}
+                                            onChange={(e) => setTodoIconColor(e.target.value)}
+                                            className='size-8 rounded border border-slate-300 cursor-pointer'
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {(action == "Add" || action == "Edit") && 
+                                <div>
+                                    <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Todo item preview</label>
+
+                                    <ListItem
+                                        action={action}
+                                        type="preview"
+                                        icon={todoIcon}
+                                        name={todo} 
+                                        notes={todoNotes}
+                                        color={todoColor}
+                                        textColor={todoTextColor}
+                                        dateAdded={new Date().toLocaleDateString()}
+                                        priority={todoPriority}
+                                        iconBg={todoIconBgColor}
+                                        iconColor={todoIconColor}
+                                        onView={() => {}}
+                                        onViewDetails={() => {}}
+                                        onComplete={() => {}}
+                                        onDelete={() => {}}
+                                    />
+                                </div>
+                            }
+                        </div>
+
+                        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent" />
                     </div>
 
                     <div className="flex justify-center sm:justify-end gap-2 w-full">

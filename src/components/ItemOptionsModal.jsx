@@ -20,7 +20,7 @@ const ItemOptionsModal = ({ onClose, onView, onEdit, onComplete, onDelete }) => 
         <>
             <div className='flex justify-between mb-1 text-black items-center'>
                 <h3>Options</h3>
-                <button className='cursor-pointer hover:bg-slate-100 rounded-lg p-1' onClick={onClose}><X size={15}/></button>
+                <button className='cursor-pointer hover:bg-slate-100 rounded-lg p-1' onClick={onClose}><X size={20}/></button>
             </div>
 
             <hr className="mb-5 text-slate-300 w-full h-[1px]" />
