@@ -1,10 +1,12 @@
-import InputError from "./InputError";
-import InputWarning from "./InputWarning";
 import { X, Info } from "lucide-react";
 import { useState, useEffect } from "react";
+
 import { DEFAULT_COLOUR_SETTINGS } from "../constants/colourSettings";
-import InputSuccess from "./InputSuccess";
+
+import InputError from "./InputError";
 import InputProcessing from "./InputProcessing";
+import InputSuccess from "./InputSuccess";
+import InputWarning from "./InputWarning";
 
 const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
     const [settings, setSettings] = useState({
@@ -85,12 +87,12 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
 
     return (
         <>
-            <div className={`bg-black/60 fixed inset-0 z-10 opacity-900 ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`} onClick={handleModalClose}></div>
+            <div className={`bg-black/60 fixed inset-0 z-10 opacity-900 ${isClosing ? 'animate-[fade-out_0.2s_ease-out_forwards]' : 'animate-[fade-in_0.2s_ease-out_forwards]'}`} onClick={handleModalClose}></div>
 
-            <div className={`text-center md:text-left bg-white fixed inset-[3em] flex flex-col z-20 self-center m-[2em] rounded-xl p-10 lg:w-1/2 ml-auto mr-auto ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`}>
+            <div className={`text-center md:text-left bg-white fixed inset-[3em] flex flex-col z-20 self-center m-[2em] rounded-xl p-10 lg:w-1/2 ml-auto mr-auto ${isClosing ? 'animate-[fade-out_0.2s_ease-out_forwards]' : 'animate-[fade-in_0.2s_ease-out_forwards]'}`}>
                 <div className="flex flex-row justify-between items-center">
                     <h2 className="text-xl md:text-2xl font-bold text-slate-600">Settings</h2>
-                    <button className="cursor-pointer absolute top-1 right-0 size-10 hover:text-white text-slate-500 rounded-full hover:bg-red-600 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={handleModalClose}><X size={20}/></button>
+                    <button className="cursor-pointer absolute top-1 right-0 size-8 hover:text-black text-slate-900 rounded-sm hover:bg-slate-200 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={handleModalClose}><X size={20}/></button>
                 </div>
 
                 <hr className="mb-5 border-none bg-slate-400 w-full h-[2px]" />

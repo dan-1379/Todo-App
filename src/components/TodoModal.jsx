@@ -1,6 +1,8 @@
 import { X, Circle, Briefcase, GraduationCap, Code, FileText, Mail, Home, ShoppingCart, Dumbbell, Heart, Utensils, Clock, Star, Bell, Calendar, Flag } from "lucide-react";
 import { useState, useEffect } from "react";
+
 import { validInput } from "../regex";
+
 import InputError from "./InputError";
 import InputWarning from './InputWarning';
 import ListItem from "./ListItem";
@@ -46,15 +48,15 @@ export const iconMap = [...iconGroups.flatMap(g => g.options), fallbackIcon]
         return acc;
     }, {});
 
-const TodoModal = ({ action, icon="circle", item, notes, background, textColor, priority, iconBgColor, iconColor, closeModal, onSave, colourModes }) => {
+const TodoModal = ({ action, icon="circle", item = "", notes = "", background, textColor, priority = "low", iconBgColor, iconColor, closeModal, onSave, colourModes }) => {
     const [todoIcon, setTodoIcon] = useState(icon);
     const [todo, setTodo] = useState(item);
     const [todoNotes, setTodoNotes] = useState(notes);
-    const [todoColor, setTodoColor] = useState(background);
-    const [todoTextColor, setTodoTextColor] = useState(textColor);
+    const [todoColor, setTodoColor] = useState(background ?? colourModes.automaticTodoColour);
+    const [todoTextColor, setTodoTextColor] = useState(textColor ?? colourModes.automaticTodoFontColor);
     const [todoPriority, setTodoPriority] = useState(priority);
-    const [todoIconBgColor, setTodoIconBgColor] = useState(iconBgColor);
-    const [todoIconColor, setTodoIconColor] = useState(iconColor);
+    const [todoIconBgColor, setTodoIconBgColor] = useState(iconBgColor ?? colourModes.todoIconBgColor);
+    const [todoIconColor, setTodoIconColor] = useState(iconColor ?? colourModes.todoIconColor);
 
     const [inputError, setInputError] = useState(false);
     const [inputWarning, setInputWarning] = useState(false);
@@ -113,12 +115,12 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
 
     return (
         <>
-            <div className={`bg-black/70 fixed inset-0 z-10 ${isClosing ? 'animate-[fade-out_0.2s_ease-out]' : 'animate-[fade-in_0.2s_ease-out]'}`} onClick={handleModalClose}></div>
+            <div className={`bg-black/70 fixed inset-0 z-10 ${isClosing ? 'animate-[fade-out_0.2s_ease-out_forwards]' : 'animate-[fade-in_0.2s_ease-out_forwards]'}`} onClick={handleModalClose}></div>
 
-            <div className={`bg-white fixed h-[80dvh] inset-10 flex flex-col z-20 self-center m-[2em] rounded-xl md:w-90 lg:w-[40%] p-10 ml-auto mr-auto ${isClosing ? 'animate-[fade-out-scale_0.2s_ease-out]' : 'animate-[fade-in-scale_0.2s_ease-out]'}`}>
+            <div className={`bg-white fixed h-[80dvh] inset-10 flex flex-col z-20 self-center m-[2em] rounded-xl md:w-90 lg:w-[40%] p-10 ml-auto mr-auto ${isClosing ? 'animate-[fade-out-scale_0.2s_ease-out_forwards]' : 'animate-[fade-in-scale_0.2s_ease-out_forwards]'}`}>
                 <div className="flex flex-row justify-between items-center">
                     <h2 className="text-xl md:text-2xl font-bold text-slate-600">{action} Todo Item</h2>
-                    <button className="cursor-pointer absolute top-1 right-0 size-10 hover:text-white text-slate-500 rounded-full hover:bg-red-600 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={handleModalClose}><X size={20}/></button>
+                    <button className="cursor-pointer absolute top-1 right-0 size-8 hover:text-black text-slate-900 rounded-sm hover:bg-slate-200 mx-1 my-0.5 duration-300 text-center ease-in-out flex items-center justify-center" onClick={handleModalClose}><X size={20}/></button>
                 </div> 
 
                 <hr className="mb-5 text-slate-300 w-full h-[1px]" />
@@ -130,24 +132,35 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                                 <div className="flex-3 flex flex-col">
                                     <label htmlFor="todoIcon" className="text-sm text-slate-600 whitespace-nowrap">Icon</label>
                                     
-                                    <select
-                                        disabled={action === "View"}
-                                        name="todoIcon" 
-                                        id="todoIcon" 
-                                        value={todoIcon}
-                                        onChange={(e) => setTodoIcon(e.target.value)}
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-900 focus:ring-offset-0"
-                                    >
-                                        <option selected value={fallbackIcon.text}>{fallbackIcon.text}</option>
+                                    {action != "View" ? 
+                                        (<select
+                                            name="todoIcon" 
+                                            id="todoIcon" 
+                                            value={todoIcon}
+                                            onChange={(e) => setTodoIcon(e.target.value)}
+                                            className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-900 focus:ring-offset-0"
+                                        >
+                                            <option defaultValue={true} value={fallbackIcon.text}>{fallbackIcon.text}</option>
 
-                                        {iconGroups.map((group) => (
-                                            <optgroup key={group.label} label={group.label}>
-                                                {group.options.map((opt) => (
-                                                    <option key={opt.text} value={opt.text}>{opt.text}</option>
-                                                ))}
-                                            </optgroup>
-                                        ))}
-                                    </select>
+                                            {iconGroups.map((group) => (
+                                                <optgroup key={group.label} label={group.label}>
+                                                    {group.options.map((opt) => (
+                                                        <option key={opt.text} value={opt.text}>{opt.text}</option>
+                                                    ))}
+                                                </optgroup>
+                                            ))}
+                                        </select>) 
+                                        : 
+                                        (<input
+                                            disabled 
+                                            type="text"
+                                            name="todoIcon" 
+                                            id="todoIcon" 
+                                            value={todoIcon[0].toUpperCase() + todoIcon.slice(1)}
+                                            className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-900 focus:ring-offset-0"
+                                        />
+                                        )
+                                    }
                                 </div>
 
                                 <div className="flex-1 flex flex-col">
@@ -189,17 +202,28 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                             <div>
                                 <label htmlFor="todoPriority" className="text-sm text-slate-600 whitespace-nowrap">Priority</label>
                         
-                                <select
-                                    disabled={action === "View"}
-                                    name="todoPriority" 
-                                    id="todoPriority" 
-                                    value={todoPriority}
-                                    onChange={(e) => setTodoPriority(e.target.value)}
-                                    className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                </select>
+                                {action != "View" ? 
+                                    (<select
+                                        disabled={action === "View"}
+                                        name="todoPriority" 
+                                        id="todoPriority" 
+                                        value={todoPriority}
+                                        onChange={(e) => setTodoPriority(e.target.value)}
+                                        className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full">
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                    </select>)
+                                    :
+                                    (<input
+                                        disabled 
+                                        type="text"
+                                        name="todoPriority" 
+                                        id="todoPriority" 
+                                        value={todoPriority[0].toUpperCase() + todoPriority.slice(1)}
+                                        className="w-full sm:flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-blue-400 sm:w-full"
+                                    />)
+                                }
                             </div>
 
                             <div>
@@ -261,7 +285,7 @@ const TodoModal = ({ action, icon="circle", item, notes, background, textColor, 
                             </div>
 
                             {(action == "Add" || action == "Edit") && 
-                                <div>
+                                <div className="pointer-events-none">
                                     <label htmlFor="text-color" className='text-sm text-slate-500 whitespace-nowrap'>Todo item preview</label>
 
                                     <ListItem

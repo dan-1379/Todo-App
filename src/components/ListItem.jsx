@@ -1,7 +1,9 @@
 import { CircleCheck, Circle, Ellipsis, NotebookPen } from 'lucide-react';
-import { iconMap } from './TodoModal';
-import ItemOptionsModal from './ItemOptionsModal';
 import { useState } from 'react';
+
+import ItemOptionsModal from './ItemOptionsModal';
+import { iconMap } from './TodoModal';
+import ListItemEllipsis from './ListItemEllipsis';
 
 const priorityMap = {
     high: {text: "High", color: "#b91c1c"},
@@ -80,7 +82,7 @@ function ListItem(props) {
 
             <div className='flex gap-2'>
                 {props.action != "Add" ?
-                    <button type='button' className='cursor-pointer' onClick={() => handleItemOptionsModal()}><Ellipsis /></button>
+                    <button type='button' className='cursor-pointer' onClick={() => handleItemOptionsModal()}><ListItemEllipsis /></button>
                     :
                     <button type='button' className='cursor-pointer'><Ellipsis /></button>
                 } 

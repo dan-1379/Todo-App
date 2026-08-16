@@ -2,10 +2,12 @@
 
 body {
     font-family:'Courier New', Courier, monospace;
+    scrollbar-gutter: stable;
 }
 
 @theme {
     --animate-close: close 0.5s ease forwards;
+    --animate-dot-pulse: dotPulse 1.2s ease-in-out infinite;
 }
 
 @keyframes close {
@@ -50,10 +52,33 @@ body {
   }
 }
 
+@keyframes dotPulse {
+    0%, 80%, 100% {
+        transform: scale(0.4);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.listItemEllipses:first-child {
+  animation-delay: 0ms;
+}
+
+.listItemEllipses:nth-child(2) {
+  animation-delay: 200ms;
+}
+
+.listItemEllipses:last-child {
+  animation-delay: 300ms;
+}
+
 .overflow-y-auto::-webkit-scrollbar {
     width: 5px;
 }
 .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1; /* slate-300 */
+    background-color: #cbd5e1;
     border-radius: 9999px;
 }
