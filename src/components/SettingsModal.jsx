@@ -8,7 +8,7 @@ import InputProcessing from "./InputProcessing";
 import InputSuccess from "./InputSuccess";
 import InputWarning from "./InputWarning";
 
-const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
+const SettingsModal = ({ closeModal, handleSubmit, colorSettings, exportData, importData }) => {
     const [settings, setSettings] = useState({
         ...DEFAULT_COLOUR_SETTINGS,
         ...colorSettings
@@ -282,6 +282,26 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings }) => {
                                 onChange={updateField("infoFontColor")}
                                 className='size-8 rounded border border-slate-300 cursor-pointer'
                             />
+                        </div>
+
+                        <div>
+                            <h3>Data</h3>
+                            <hr className="border-none bg-slate-400 w-full h-[1px]" />
+                        </div>
+                        <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Import</label>
+                            <input 
+                                type="file" 
+                                accept="application/json"
+                                id="import-file" 
+                                onChange={importData}
+                                className='rounded border border-slate-300 cursor-pointer w-50' 
+                            />  
+                        </div>
+
+                        <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Export</label>
+                            <input type="button" onClick={exportData} value="Export" className='px-2 py-1 rounded border border-slate-300 cursor-pointer' />
                         </div>
                     </div>
 

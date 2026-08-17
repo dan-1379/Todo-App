@@ -42,6 +42,12 @@ function TodosReducer(state, action) {
     case 'RESET_COMPLETED':
       return { ...state, completed: [] };
 
+    case 'IMPORT':
+      return {
+        todos: [...state.todos, ...(action.payload.todos ?? [])],
+        completed: [...state.completed, ...(action.payload.completed ?? [])],
+      };
+
     default:
       return state;
   }

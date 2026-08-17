@@ -15,6 +15,7 @@ import TodosReducer from './hooks/TodosReducer';
 import useLocalStorageState from './hooks/useLocalStorageState';
 
 import { getCurrentDate } from './utils/dateFormat';
+import { exportTodosAsJSON, importTodosFromJSON } from './utils/exportData';
 
 import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
 
@@ -142,6 +143,33 @@ function App() {
     setFilterOption(option);
   }
 
+  const handleExport = () => {
+    try {
+      exportTodosAsJSON(todos, completed);
+      setSuccessMessage("Todos exported successfully");
+    } catch (err) {
+      setInputError("Error in exporting todos");
+    }
+  }
+
+  const handleImport = (e) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    importTodosFromJSON(
+      file,
+      (data) => {
+        dispatch({ type: 'IMPORT', payload: data });
+        setSuccessMessage('Todos imported successfully!');
+      },
+      () => {
+        setInputError(true);
+      }
+    );
+
+    event.target.value = '';
+  }
+
   const filteredTodos = filterOption
     ? todos.filter(todo => todo.priority === filterOption)
     : todos;
@@ -237,6 +265,8 @@ function App() {
             closeModal={closeModal}
             handleSubmit={(newSettings) => setColourSettings(newSettings)}
             colorSettings={colourSettings}
+            exportData={handleExport}
+            importData={handleImport}
           />
         }
 
