@@ -1,7 +1,7 @@
 import { CircleX, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const InputError = ({ closeError }) => {
+const InputError = ({ closeError, textContent }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     const handleClose = () => {
@@ -29,7 +29,7 @@ const InputError = ({ closeError }) => {
                 <button className='cursor-pointer hover:text-red-400' onClick={handleClose}><X /></button>
             </div>
             <p className="text-sm mt-1">
-            Please use only letters, numbers, and spaces.
+                {textContent}
             </p>
         </div>
     )

@@ -41,6 +41,12 @@ function TodosReducer(state, action) {
 
     case 'RESET_COMPLETED':
       return { ...state, completed: [] };
+    
+    case 'RESET_ALL':
+      return {
+        todos: [],
+        completed: []
+      }
 
     case 'IMPORT':
       return {

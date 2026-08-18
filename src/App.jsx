@@ -53,9 +53,10 @@ function App() {
   const closeModal = () => setActiveModal(null);
 
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [isPendingFullErase, setIsPendingFullErase] = useState(false);
 
   const [successMessage, setSuccessMessage] = useState("");
-  const [inputError, setInputError] = useState(false);
+  const [inputError, setInputError] = useState(null);
   const [inputWarning, setInputWarning] = useState(false);
 
   const [filterOption, setFilterOption] = useState(null);
@@ -135,6 +136,16 @@ function App() {
     dispatch({ type: 'RESET_COMPLETED' });
   }
 
+  const handleResetData = () => {
+    setIsPendingFullErase(true);
+  }
+
+  const resetAllData = () => {
+    dispatch({ type: "RESET_ALL" });
+    setIsPendingFullErase(false);
+    setSuccessMessage("Data erased successfully");
+  }
+
   const handleFilterModal = () => {
     setIsOpenFilter(!isOpenFilter);
   }
@@ -163,7 +174,7 @@ function App() {
         setSuccessMessage('Todos imported successfully!');
       },
       () => {
-        setInputError(true);
+        setInputError("Error in importing todos");
       }
     );
 
@@ -267,6 +278,7 @@ function App() {
             colorSettings={colourSettings}
             exportData={handleExport}
             importData={handleImport}
+            eraseData={handleResetData}
           />
         }
 
@@ -280,11 +292,20 @@ function App() {
             onCancel={() => setPendingDelete(null)}
             onConfirm={confirmPendingDelete}
           />
-}
+        }
+
+        {isPendingFullErase &&
+          <ConfirmationDialog 
+            headerText="Erase all todo data?"
+            confirmationText= "This will clear your entire todo data. Are you sure you want to continue?"
+            onCancel={() => setIsPendingFullErase(false)}
+            onConfirm={resetAllData}
+          />
+        }
       </div>
 
       <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md z-30'>
-          {inputError && <InputError closeError={() => setInputError(false)} />} 
+          {inputError && <InputError closeError={() => setInputError(false)} textContent={inputError} />} 
           {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />}
           {successMessage && <InputSuccess closeSuccess={() => setSuccessMessage("")} textContent={successMessage} />}
       </div>

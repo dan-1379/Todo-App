@@ -27,7 +27,6 @@ const ActiveTodosPanel = ({ todos, completed, colourSettings, filterOption, isOp
                         handleInput={onAdd}
                         textContent="Add new todo"
                         colourModes={colourSettings}
-                        className=""
                     />
                 </div>
             </div>

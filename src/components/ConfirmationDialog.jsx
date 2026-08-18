@@ -1,7 +1,7 @@
 import { X, TriangleAlert } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const ConfirmationDialog = ({ headerText, confirmationText, itemForDeletion, onCancel, onConfirm, confirmLabel = "Delete" }) => {
+const ConfirmationDialog = ({ headerText, confirmationText, itemForDeletion = "", onCancel, onConfirm, confirmLabel = "Delete" }) => {
     useEffect(() => {
         document.body.style.overflow = 'hidden';
 

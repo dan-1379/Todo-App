@@ -1,4 +1,4 @@
-import { X, Info } from "lucide-react";
+import { X, Info, FileUp, FileDown, Trash } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { DEFAULT_COLOUR_SETTINGS } from "../constants/colourSettings";
@@ -8,7 +8,9 @@ import InputProcessing from "./InputProcessing";
 import InputSuccess from "./InputSuccess";
 import InputWarning from "./InputWarning";
 
-const SettingsModal = ({ closeModal, handleSubmit, colorSettings, exportData, importData }) => {
+import TodosReducer from "../hooks/TodosReducer";
+
+const SettingsModal = ({ closeModal, handleSubmit, colorSettings, exportData, importData, eraseData }) => {
     const [settings, setSettings] = useState({
         ...DEFAULT_COLOUR_SETTINGS,
         ...colorSettings
@@ -84,6 +86,10 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings, exportData, im
             window.removeEventListener('keydown', handleEnterKeyPress);
         };
     }, [settings]);
+
+    const openImportData = () => {
+        document.getElementById("inputField").click();
+    }
 
     return (
         <>
@@ -293,21 +299,35 @@ const SettingsModal = ({ closeModal, handleSubmit, colorSettings, exportData, im
                             <input 
                                 type="file" 
                                 accept="application/json"
-                                id="import-file" 
+                                id="inputField" 
                                 onChange={importData}
-                                className='rounded border border-slate-300 cursor-pointer w-50' 
-                            />  
+                                className='rounded border border-slate-300 cursor-pointer w-50 bg-slate-100 hover:bg-slate-200 hidden' 
+                            />
+                            <button id="btn" type="button" onClick={openImportData} className="flex gap-2 items-center px-2 py-1 rounded border border-slate-300 cursor-pointer bg-slate-100 hover:bg-slate-200">Import Todos <FileDown size={15}/></button>
                         </div>
 
                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
                             <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Export</label>
-                            <input type="button" onClick={exportData} value="Export" className='px-2 py-1 rounded border border-slate-300 cursor-pointer' />
+
+                            <div className='flex gap-2 items-center px-2 py-1 rounded border border-slate-300 cursor-pointer bg-slate-100 hover:bg-slate-200'>
+                                <button type="button" onClick={exportData} className="cursor-pointer">Export Todos</button>
+                                <FileUp size={15}/>
+                            </div>
+                        </div>
+
+                         <div className='flex flex-col md:flex-row justify-between items-center gap-2'>
+                            <label htmlFor="info-bg-color" className='text-sm text-slate-600 whitespace-nowrap'>Erase</label>
+
+                            <div className='flex gap-2 items-center px-2 py-1 rounded text-red-600 font-bold border border-slate-300 cursor-pointer bg-slate-100 hover:bg-red-500 hover:text-white'>
+                                <button type="button" onClick={eraseData} className="cursor-pointer">Delete Todos</button>
+                                <Trash size={15} />
+                            </div>
                         </div>
                     </div>
 
                     <hr className="mb-5 border-none bg-slate-400 w-full h-[2px]" />
 
-                    <div className="flex flex-row md:flex-row gap-5 justify-center sm:flex-row">
+                    <div className="flex flex-row justify-center md:flex-row gap-5 md:justify-end sm:flex-row">
                         <input type="button" value="Reset" onClick={resetColorValues} className="cursor-pointer bg-none text-slate-500 border border-slate-200 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white active:scale-95 transition" />
                         <input type="submit" value="Save" className='cursor-pointer w-1/2 md:w-1/4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition' />
                     </div>
