@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer, useRef } from 'react';
 
 import ActiveTodosPanel from './components/ActiveTodosPanel';
 import CompletedTodosPanel from './components/CompletedTodosPanel';
@@ -20,6 +20,7 @@ import { exportTodosAsJSON, importTodosFromJSON } from './utils/exportData';
 import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
 
 import './App.css';
+import SuccessModal from './components/SuccessModal';
 
 function App() {
   const [state, dispatch] = useReducer(TodosReducer, null, () => {
@@ -51,6 +52,9 @@ function App() {
   const openViewModal = (id) => setActiveModal({ mode: 'view', id });
   const openSettingsModal = () => setActiveModal({ mode: 'settings' });
   const closeModal = () => setActiveModal(null);
+
+  const [openSuccessModal, setOpenSuccessModal] = useState(false);
+  const handleSuccessModal = () => setOpenSuccessModal(!openSuccessModal);
 
   const [pendingDelete, setPendingDelete] = useState(null);
   const [isPendingFullErase, setIsPendingFullErase] = useState(false);
@@ -197,6 +201,23 @@ function App() {
     ? todos.find(t => t.id === pendingDelete.id)
     : null;
 
+  const completionPercent = completed.length > 0
+  ? Math.round((completed.length / (todos.length + completed.length)) * 100)
+  : 0;
+
+  const previousTodosLength  = useRef(todos.length);
+
+  useEffect(() => {
+    const justCompletedEverything = previousTodosLength.current > 0 && 
+      todos.length === 0 && completed.length > 0;
+
+    if (justCompletedEverything) {
+      setOpenSuccessModal(true);
+    }
+
+    previousTodosLength.current = todos.length;
+}, [todos.length, completed.length]);
+
   return (
     <div>
       <Header 
@@ -222,7 +243,7 @@ function App() {
 
         <CompletedTodosPanel
           completed={completed}
-          activeCount={todos.length}
+          completedPercent={completionPercent}
           colourSettings={colourSettings}
           onReset={handleResetItems}
         />
@@ -300,6 +321,13 @@ function App() {
             confirmationText= "This will clear your entire todo data. Are you sure you want to continue?"
             onCancel={() => setIsPendingFullErase(false)}
             onConfirm={resetAllData}
+          />
+        }
+
+        {openSuccessModal &&
+          <SuccessModal
+            tasksClearedCount={completed.length}
+            closeModal={handleSuccessModal}
           />
         }
       </div>

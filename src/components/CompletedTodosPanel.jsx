@@ -1,12 +1,11 @@
+import { useState } from 'react';
+import CompletedConfetti from './CompletedConfetti';
 import CompletedTodoItem from './CompletedTodoItem';
 import InfoCard from './InfoCard';
 import ResetButton from './ResetButton';
+import SuccessModal from './SuccessModal';
 
-const CompletedTodosPanel = ({ completed, activeCount, colourSettings, onReset }) => {
-  const completionPercent = completed.length > 0
-    ? Math.round((completed.length / (activeCount + completed.length)) * 100)
-    : 0;
-
+const CompletedTodosPanel = ({ completed, completedPercent, colourSettings, onReset }) => {
   return (
     <div className='flex-1 bg-white rounded-2xl shadow-lg p-6'>
       <h1 className='text-2xl md:text-3xl font-bold mb-4' style={{ color: colourSettings.cardHeadingColour }}>
@@ -14,7 +13,7 @@ const CompletedTodosPanel = ({ completed, activeCount, colourSettings, onReset }
       </h1>
 
       {completed.length > 0 && (
-        <InfoCard textContent={`${completionPercent}% completed`} colourModes={colourSettings} />
+        <InfoCard textContent={`${completedPercent}% completed`} colourModes={colourSettings} />
       )}
 
       {completed.length === 0 && (
