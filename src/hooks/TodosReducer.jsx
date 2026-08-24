@@ -33,26 +33,37 @@ function TodosReducer(state, action) {
         timeStampCompleted: Date.now(),
       };
 
+      const duration = completedItem.timeStampCompleted - completedItem.timeStampStarted;
+
       return {
         todos: state.todos.filter(t => t.id !== action.id),
         completed: [...state.completed, completedItem],
+        totalTime: state.totalTime + duration
       };
     }
 
     case 'RESET_COMPLETED':
-      return { ...state, completed: [] };
+      return { ...state, completed: [], totalTime: 0 };
     
     case 'RESET_ALL':
       return {
         todos: [],
-        completed: []
+        completed: [],
+        totalTime: 0
       }
 
-    case 'IMPORT':
+    case 'IMPORT': {
+      const mergedCompleted = [...state.completed, ...(action.payload.completed ?? [])];
+      const importedTotal = mergedCompleted.reduce(
+        (sum, item) => sum + (item.timeStampCompleted - item.timeStampStarted), 0
+      );
+
       return {
         todos: [...state.todos, ...(action.payload.todos ?? [])],
-        completed: [...state.completed, ...(action.payload.completed ?? [])],
+        completed: mergedCompleted,
+        totalTime: importedTotal
       };
+    }
 
     default:
       return state;

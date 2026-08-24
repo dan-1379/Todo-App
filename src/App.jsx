@@ -14,7 +14,7 @@ import TodoModal from './components/TodoModal';
 import TodosReducer from './hooks/TodosReducer';
 import useLocalStorageState from './hooks/useLocalStorageState';
 
-import { getCurrentDate } from './utils/dateFormat';
+import { getCurrentDate, formatDuration } from './utils/dateFormat';
 import { exportTodosAsJSON, importTodosFromJSON } from './utils/exportData';
 
 import { DEFAULT_COLOUR_SETTINGS } from './constants/colourSettings';
@@ -26,14 +26,16 @@ function App() {
   const [state, dispatch] = useReducer(TodosReducer, null, () => {
     const todoItems = localStorage.getItem("Todo-Items");
     const completedItems = localStorage.getItem("Completed-Items");
+    const totalTimeSpent = localStorage.getItem("Total-Time");
 
     return {
       todos: todoItems ? JSON.parse(todoItems) : [],
-      completed: completedItems ? JSON.parse(completedItems) : []
+      completed: completedItems ? JSON.parse(completedItems) : [],
+      totalTime: totalTimeSpent ? JSON.parse(totalTimeSpent) : 0 
     }
   });
 
-  const { todos, completed } = state;
+  const { todos, completed, totalTime } = state;
 
   useEffect(() => {
     localStorage.setItem('Todo-Items', JSON.stringify(todos));
@@ -42,6 +44,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem("Completed-Items", JSON.stringify(completed));
   }, [completed]);
+
+  useEffect(() => {
+    localStorage.setItem("Total-Time", JSON.stringify(totalTime));
+  }, [totalTime]);
 
   const [colourSettings, setColourSettings] = useLocalStorageState("Color-Settings", DEFAULT_COLOUR_SETTINGS);
 
@@ -216,7 +222,7 @@ function App() {
     }
 
     previousTodosLength.current = todos.length;
-}, [todos.length, completed.length]);
+  }, [todos.length, completed.length]);
 
   return (
     <div>
@@ -328,12 +334,13 @@ function App() {
           <SuccessModal
             tasksClearedCount={completed.length}
             closeModal={handleSuccessModal}
+            totalTime={formatDuration(totalTime)}
           />
         }
       </div>
 
       <div className='fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md z-30'>
-          {inputError && <InputError closeError={() => setInputError(false)} textContent={inputError} />} 
+          {inputError && <InputError closeError={() => setInputError(null)} textContent={inputError} />} 
           {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />}
           {successMessage && <InputSuccess closeSuccess={() => setSuccessMessage("")} textContent={successMessage} />}
       </div>

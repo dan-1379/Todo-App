@@ -73,7 +73,7 @@ function ListItem(props) {
                             <p className='font-light text-xs flex gap-2'>{props.dateAdded}</p>
                             
                             {props.notes && 
-                                <p className='flex gap-2 items-center'><span className='text-slate-400'>●</span> <NotebookPen size={12}/></p>
+                                <p className='flex gap-2 items-center' style={{ color: props.textColor }}><span>●</span> <NotebookPen size={12}/></p>
                             }
                         </div>
                     </div>
@@ -82,7 +82,7 @@ function ListItem(props) {
 
             <div className='flex gap-2'>
                 {props.action != "Add" ?
-                    <button type='button' className='cursor-pointer' onClick={() => handleItemOptionsModal()}><ListItemEllipsis /></button>
+                    <button type='button' className='cursor-pointer' onClick={() => handleItemOptionsModal()}><ListItemEllipsis colour={props.textColor} /></button>
                     :
                     <button type='button' className='cursor-pointer'><Ellipsis /></button>
                 } 

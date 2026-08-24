@@ -1,26 +1,9 @@
 import { CircleCheck } from "lucide-react";
+import { formatDuration } from "../utils/dateFormat";
+import { showPreviewText } from "../utils/textFormat";
+
 
 const CompletedTodoItem = ({ item, timeStarted, timeCompleted, timeStampStarted, timeStampCompleted, colourModes }) => {
-     const formatDuration = (ms) => {
-        if (!ms || ms < 0) return "—";
-
-        const minutes = Math.floor(ms / 60000);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        if (days > 0) return `${days}d ${hours % 24}h`;
-        if (hours > 0) return `${hours}h ${minutes % 60}m`;
-        if (minutes > 0) return `${minutes}m`;
-        return "<1m";
-    }
-
-    const showPreviewText = (text, wordsPreview = 4) => {
-        const splitText = text.split(" ");
-        const previewText = splitText.slice(0, wordsPreview).join(" ");
-
-        return splitText.length > wordsPreview ? previewText + "..." : previewText;
-    }
-
     const timeTaken = formatDuration(timeStampCompleted - timeStampStarted);
 
     return (

@@ -2,7 +2,7 @@ import { CircleCheck, X } from "lucide-react";
 import { useState } from "react";
 import CompletedConfetti from "./CompletedConfetti";
 
-const SuccessModal = ({ tasksClearedCount, closeModal }) => {
+const SuccessModal = ({ tasksClearedCount, closeModal, totalTime }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     const handleModalClose = () => {
@@ -38,7 +38,7 @@ const SuccessModal = ({ tasksClearedCount, closeModal }) => {
                     <h2 className="font-bold text-xl text-slate-700">All done!</h2>
                     <p className="text-slate-500 text-sm">You've completed every todo on your list.</p>
                     <p className="text-slate-400 text-xs mb-4">
-                        {tasksClearedCount} {tasksClearedCount === 1 ? "task" : "tasks"} cleared today
+                        {tasksClearedCount} {tasksClearedCount === 1 ? "task" : "tasks"} cleared today in {totalTime}
                     </p>
 
                     <button

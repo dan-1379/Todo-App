@@ -58,7 +58,7 @@ const TodoModal = ({ action, icon="circle", item = "", notes = "", background, t
     const [todoIconBgColor, setTodoIconBgColor] = useState(iconBgColor ?? colourModes.todoIconBgColor);
     const [todoIconColor, setTodoIconColor] = useState(iconColor ?? colourModes.todoIconColor);
 
-    const [inputError, setInputError] = useState(false);
+    const [inputError, setInputError] = useState(null);
     const [inputWarning, setInputWarning] = useState(false);
 
     const IconComponent = iconMap[todoIcon] || fallbackIcon.icon;
@@ -75,16 +75,16 @@ const TodoModal = ({ action, icon="circle", item = "", notes = "", background, t
 
     const handleSubmit = (e) => {
         e?.preventDefault();
-        setInputError(false);
+        setInputError(null);
         setInputWarning(false);
 
         if (todo.trim() === ""){
-            setInputWarning(true);
+            setInputWarning("Todo item cannot be blank");
             return;
         }
         
         if (!validInput.test(todo)) {
-            setInputError(true);
+            setInputError("Not a valid todo name. Please try again.");
             return;
         }
 
@@ -340,7 +340,7 @@ const TodoModal = ({ action, icon="circle", item = "", notes = "", background, t
             </div>
 
             <div className="fixed inset-x-3 bottom-1 sm:left-auto sm:right-10 sm:w-md z-30">
-                {inputError && <InputError closeError={() => setInputError(false)} />}
+                {inputError && <InputError closeError={() => setInputError(null)} textContent={inputError} />}
                 {inputWarning && <InputWarning closeError={() => setInputWarning(false)} />}
             </div>
         </>
